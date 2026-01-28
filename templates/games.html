@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games - Hexecutioners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .navbar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .navbar h1 {
+            color: #333;
+            font-size: 24px;
+        }
+        
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .user-info {
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        
+        .game-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .game-card .emoji {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        
+        .play-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .back-btn {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Hexecutioners - Games</h1>
+        <div class="navbar-right">
+            <span class="user-info">Welcome, {{ username }}!</span>
+            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <a href="{{ url_for('dashboard') }}" class="btn back-btn">Back to Dashboard</a>
+        
+        <div class="games-grid">
+            <!-- Game 1: Number Guessing -->
+            <div class="game-card">
+                <div class="emoji">🔢</div>
+                <h2>Number Guess</h2>
+                <p>Guess the secret number between 1-100. Test your logic and intuition!</p>
+                <a href="{{ url_for('number_guess') }}" class="play-btn">Play Now</a>
+            </div>
+            
+            <!-- Game 2: Memory -->
+            <div class="game-card">
+                <div class="emoji">🧠</div>
+                <h2>Memory Match</h2>
+                <p>Match pairs of cards to test your memory. Quick thinking required!</p>
+                <a href="{{ url_for('memory_game') }}" class="play-btn">Play Now</a>
+            </div>
+            
+            <!-- Game 3: Trivia -->
+            <div class="game-card">
+                <div class="emoji">🧩</div>
+                <h2>Quick Trivia</h2>
+                <p>Answer general knowledge questions. How many can you get right?</p>
+                <a href="{{ url_for('trivia_game') }}" class="play-btn">Play Now</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

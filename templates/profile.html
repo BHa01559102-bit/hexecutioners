@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Hexecutioners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .navbar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .navbar h1 {
+            color: #333;
+            font-size: 24px;
+        }
+        
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .profile-header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .profile-header h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        .user-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-box {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-label {
+            color: #999;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .documents-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .documents-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        
+        .document-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .document-card {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .document-card:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .document-card.uploaded {
+            border-style: solid;
+            border-color: #28a745;
+            background: #f0f8f4;
+        }
+        
+        .doc-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .doc-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .doc-status {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .doc-status.uploaded {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .upload-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .download-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        
+        .download-btn:hover {
+            background: #218838;
+        }
+        
+        .loading {
+            display: none;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Hexecutioners - Profile</h1>
+        <div class="navbar-right">
+            <span style="color: #555; font-weight: 500;">{{ user.username }}</span>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="profile-header">
+            <h2>👤 User Profile</h2>
+            <div class="user-info">
+                <div class="info-box">
+                    <div class="info-label">Username</div>
+                    <div class="info-value">{{ user.username }}</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ user.email }}</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">User ID</div>
+                    <div class="info-value">#{{ user.id }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="documents-section">
+            <h2>📄 Documents</h2>
+            <p style="color: #666; margin-bottom: 25px;">Upload your documents (JPG, PNG, or PDF format)</p>
+            
+            <div class="document-grid">
+                <!-- Profile Picture -->
+                <div class="document-card {% if documents.get('Profile Picture') %}uploaded{% endif %}">
+                    <div class="doc-icon">📷</div>
+                    <div class="doc-title">Profile Picture</div>
+                    <div class="doc-status {% if documents.get('Profile Picture') %}uploaded{% endif %}">
+                        {% if documents.get('Profile Picture') %}Uploaded{% else %}Not Uploaded{% endif %}
+                    </div>
+                    <input type="file" class="upload-input" id="profilePicInput" accept=".jpg,.jpeg,.png" onchange="uploadDocument('Profile Picture', 'profilePicInput')">
+                    {% if documents.get('Profile Picture') %}
+                        <div style="margin-bottom: 10px;">
+                            <a href="{{ url_for('download_document', doc_id=documents.get('Profile Picture').id) }}" class="download-btn">Download</a>
+                        </div>
+                        <button class="upload-btn" onclick="document.getElementById('profilePicInput').click()">Re-upload</button>
+                    {% else %}
+                        <button class="upload-btn" onclick="document.getElementById('profilePicInput').click()">Upload</button>
+                    {% endif %}
+                    <div class="loading" id="profilePicLoading">Uploading...</div>
+                </div>
+                
+                <!-- Signature -->
+                <div class="document-card {% if documents.get('Signature') %}uploaded{% endif %}">
+                    <div class="doc-icon">✍️</div>
+                    <div class="doc-title">Signature</div>
+                    <div class="doc-status {% if documents.get('Signature') %}uploaded{% endif %}">
+                        {% if documents.get('Signature') %}Uploaded{% else %}Not Uploaded{% endif %}
+                    </div>
+                    <input type="file" class="upload-input" id="signatureInput" accept=".jpg,.jpeg,.png" onchange="uploadDocument('Signature', 'signatureInput')">
+                    {% if documents.get('Signature') %}
+                        <div style="margin-bottom: 10px;">
+                            <a href="{{ url_for('download_document', doc_id=documents.get('Signature').id) }}" class="download-btn">Download</a>
+                        </div>
+                        <button class="upload-btn" onclick="document.getElementById('signatureInput').click()">Re-upload</button>
+                    {% else %}
+                        <button class="upload-btn" onclick="document.getElementById('signatureInput').click()">Upload</button>
+                    {% endif %}
+                    <div class="loading" id="signatureLoading">Uploading...</div>
+                </div>
+                
+                <!-- Aadhar Card -->
+                <div class="document-card {% if documents.get('Aadhar Card') %}uploaded{% endif %}">
+                    <div class="doc-icon">🆔</div>
+                    <div class="doc-title">Aadhar Card</div>
+                    <div class="doc-status {% if documents.get('Aadhar Card') %}uploaded{% endif %}">
+                        {% if documents.get('Aadhar Card') %}Uploaded{% else %}Not Uploaded{% endif %}
+                    </div>
+                    <input type="file" class="upload-input" id="aadharInput" accept=".jpg,.jpeg,.png,.pdf" onchange="uploadDocument('Aadhar Card', 'aadharInput')">
+                    {% if documents.get('Aadhar Card') %}
+                        <div style="margin-bottom: 10px;">
+                            <a href="{{ url_for('download_document', doc_id=documents.get('Aadhar Card').id) }}" class="download-btn">Download</a>
+                        </div>
+                        <button class="upload-btn" onclick="document.getElementById('aadharInput').click()">Re-upload</button>
+                    {% else %}
+                        <button class="upload-btn" onclick="document.getElementById('aadharInput').click()">Upload</button>
+                    {% endif %}
+                    <div class="loading" id="aadharLoading">Uploading...</div>
+                </div>
+                
+                <!-- 12th Marksheet -->
+                <div class="document-card {% if documents.get('12th Marksheet') %}uploaded{% endif %}">
+                    <div class="doc-icon">📜</div>
+                    <div class="doc-title">12th Marksheet</div>
+                    <div class="doc-status {% if documents.get('12th Marksheet') %}uploaded{% endif %}">
+                        {% if documents.get('12th Marksheet') %}Uploaded{% else %}Not Uploaded{% endif %}
+                    </div>
+                    <input type="file" class="upload-input" id="marksheetInput" accept=".jpg,.jpeg,.png,.pdf" onchange="uploadDocument('12th Marksheet', 'marksheetInput')">
+                    {% if documents.get('12th Marksheet') %}
+                        <div style="margin-bottom: 10px;">
+                            <a href="{{ url_for('download_document', doc_id=documents.get('12th Marksheet').id) }}" class="download-btn">Download</a>
+                        </div>
+                        <button class="upload-btn" onclick="document.getElementById('marksheetInput').click()">Re-upload</button>
+                    {% else %}
+                        <button class="upload-btn" onclick="document.getElementById('marksheetInput').click()">Upload</button>
+                    {% endif %}
+                    <div class="loading" id="marksheetLoading">Uploading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function uploadDocument(docType, inputId) {
+            const fileInput = document.getElementById(inputId);
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            const loadingId = docType.replace(/\s+/g, '') + 'Loading';
+            const loadingEl = document.getElementById(loadingId);
+            
+            loadingEl.style.display = 'block';
+            
+            const formData = new FormData();
+            formData.append('document', file);
+            formData.append('document_type', docType);
+            
+            fetch('/upload-document', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingEl.style.display = 'none';
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                loadingEl.style.display = 'none';
+                alert('Upload failed: ' + error);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Trivia - Hexecutioners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .instructions {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .progress {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-size: 16px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-back:hover {
+            transform: translateY(-2px);
+        }
+        
+        .score-display {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            display: none;
+        }
+        
+        .score-display h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        .final-score {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 48px;
+            font-weight: bold;
+        }
+        
+        .score-details {
+            text-align: left;
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .score-details p {
+            color: #555;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="gameContent">
+            <h1>🧩 Quick Trivia</h1>
+            <p class="instructions">Answer general knowledge questions correctly!</p>
+            
+            <div class="progress">
+                Question <span id="currentQuestion">1</span> / <span id="totalQuestions">5</span> | Score: <span id="score">0</span>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question"></div>
+                <div class="options" id="options"></div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+                <button class="btn-back" onclick="goBack()">Back</button>
+            </div>
+        </div>
+        
+        <div class="score-display" id="scoreDisplay">
+            <h2>Quiz Complete!</h2>
+            <div class="final-score" id="finalScoreDisplay">0</div>
+            <div class="score-details">
+                <p>Questions Answered: <span id="answered">0</span>/5</p>
+                <p>Correct Answers: <span id="correct">0</span></p>
+                <p>Accuracy: <span id="accuracy">0</span>%</p>
+            </div>
+            <div class="button-group">
+                <button class="btn-next" onclick="startNewQuiz()">Try Again</button>
+                <button class="btn-back" onclick="goBack()">Back to Games</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            {
+                question: "What is the capital of France?",
+                options: ["London", "Berlin", "Paris", "Madrid"],
+                correct: 2
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                correct: 1
+            },
+            {
+                question: "What is the largest ocean on Earth?",
+                options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+                correct: 3
+            },
+            {
+                question: "Who wrote Romeo and Juliet?",
+                options: ["Jane Austen", "William Shakespeare", "Mark Twain", "Charles Dickens"],
+                correct: 1
+            },
+            {
+                question: "What is the smallest country in the world?",
+                options: ["Monaco", "Liechtenstein", "Vatican City", "San Marino"],
+                correct: 2
+            }
+        ];
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = 0;
+        let selectedAnswer = -1;
+        
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question').textContent = question.question;
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option;
+                optionEl.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionEl);
+            });
+            
+            selectedAnswer = -1;
+            document.getElementById('nextBtn').disabled = true;
+        }
+        
+        function selectAnswer(index) {
+            selectedAnswer = index;
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            document.getElementById('nextBtn').disabled = false;
+        }
+        
+        function nextQuestion() {
+            if (selectedAnswer === -1) return;
+            
+            answered++;
+            const question = questions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            if (selectedAnswer === question.correct) {
+                score += 20;
+                options[selectedAnswer].classList.add('correct');
+            } else {
+                options[selectedAnswer].classList.add('incorrect');
+                options[question.correct].classList.add('correct');
+            }
+            
+            document.getElementById('score').textContent = score;
+            document.getElementById('nextBtn').disabled = true;
+            
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    loadQuestion();
+                } else {
+                    endQuiz();
+                }
+            }, 1500);
+        }
+        
+        function endQuiz() {
+            document.getElementById('gameContent').style.display = 'none';
+            document.getElementById('scoreDisplay').style.display = 'block';
+            document.getElementById('finalScoreDisplay').textContent = score;
+            document.getElementById('answered').textContent = answered;
+            document.getElementById('correct').textContent = score / 20;
+            document.getElementById('accuracy').textContent = Math.round((score / 100) * 100);
+            
+            // Save score
+            fetch('/api/save-score', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({game_name: 'Quick Trivia', score: score})
+            });
+        }
+        
+        function startNewQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = 0;
+            document.getElementById('gameContent').style.display = 'block';
+            document.getElementById('scoreDisplay').style.display = 'none';
+            loadQuestion();
+        }
+        
+        function goBack() {
+            window.location.href = '/games';
+        }
+        
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
