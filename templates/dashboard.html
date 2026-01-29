@@ -61,6 +61,56 @@
             transform: translateY(-2px);
         }
         
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .profile-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 12px 0;
+            z-index: 1;
+            border-radius: 5px;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+        }
+        
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .dropdown-content.show {
+            display: block;
+        }
+        
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -152,24 +202,36 @@
     <div class="navbar">
         <h1>Hexecutioners</h1>
         <div class="navbar-right">
-            <span class="user-info">Welcome, {{ username }}!</span>
-            <a href="{{ url_for('profile') }}" class="btn">👤 Profile</a>
-            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            <select id="languageSelector" onchange="changeLanguage(this.value)" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; margin-right: 15px;">
+                <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+                <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
+                <option value="kn" {% if lang == 'kn' %}selected{% endif %}>ಕನ್ನಡ</option>
+            </select>
+            <span class="user-info" data-translate="welcome_user">Welcome, {{ username }}!</span>
+            <div class="profile-dropdown">
+                <button class="profile-btn" onclick="toggleDropdown()" data-translate="profile">👤 Profile</button>
+                <div class="dropdown-content" id="dropdownMenu">
+                    <a href="{{ url_for('user_details') }}" data-translate="user_details">👤 User Details</a>
+                    <a href="{{ url_for('upload_documents_page') }}" data-translate="upload_documents">📄 Upload Documents</a>
+                    <a href="{{ url_for('logout') }}" data-translate="logout">🚪 Logout</a>
+                </div>
+            </div>
         </div>
     </div>
     
     <div class="container">
         <div class="card">
-            <h2>Dashboard</h2>
-            <p class="welcome-message">
+            <h2 data-translate="dashboard_title">Dashboard</h2>
+            <p class="welcome-message" data-translate="dashboard_welcome">
                 Welcome to Hexecutioners! You have successfully logged in. While you wait for your class to start, 
                 enjoy some quick games to keep yourself engaged and have fun.
             </p>
             
             <div class="action-buttons">
-                <a href="{{ url_for('games') }}" class="btn">🎮 Play Games</a>
-                <button class="btn btn-secondary" onclick="alert('Coming Soon!')">📚 Learn Modules</button>
-                <button class="btn btn-secondary" onclick="alert('Coming Soon!')">🏆 Achievements</button>
+                <a href="{{ url_for('games') }}" class="btn" data-translate="play_games">🎮 Play Games</a>
+                <a href="{{ url_for('learning_modules') }}" class="btn" data-translate="learn_modules">📚 Learn Modules</a>
+                <a href="{{ url_for('leaderboard') }}" class="btn" data-translate="leaderboard">🏆 Leaderboard</a>
+                <a href="{{ url_for('skill_performance') }}" class="btn btn-secondary" data-translate="skill_performance">📊 Skill Performance</a>
             </div>
         </div>
         
@@ -189,5 +251,92 @@
             {% endif %}
         </div>
     </div>
+    
+    <script>
+        function toggleDropdown() {
+            document.getElementById('dropdownMenu').classList.toggle('show');
+        }
+        
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.profile-btn')) {
+                const dropdowns = document.getElementsByClassName('dropdown-content');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    if (dropdowns[i].classList.contains('show')) {
+                        dropdowns[i].classList.remove('show');
+                    }
+                }
+            }
+        }
+        
+        // Language translations
+        const translations = {
+            'en': {
+                'welcome_user': 'Welcome, {{ username }}!',
+                'profile': '👤 Profile',
+                'user_details': '👤 User Details',
+                'upload_documents': '📄 Upload Documents',
+                'logout': '🚪 Logout',
+                'dashboard_title': 'Dashboard',
+                'dashboard_welcome': 'Welcome to Hexecutioners! You have successfully logged in. While you wait for your class to start, enjoy some quick games to keep yourself engaged and have fun.',
+                'play_games': '🎮 Play Games',
+                'learn_modules': '📚 Learn Modules',
+                'leaderboard': '🏆 Leaderboard',
+                'skill_performance': '📊 Skill Performance'
+            },
+            'hi': {
+                'welcome_user': 'स्वागत है, {{ username }}!',
+                'profile': '👤 प्रोफ़ाइल',
+                'user_details': '👤 उपयोगकर्ता विवरण',
+                'upload_documents': '📄 दस्तावेज़ अपलोड करें',
+                'logout': '🚪 लॉगआउट',
+                'dashboard_title': 'डैशबोर्ड',
+                'dashboard_welcome': 'Hexecutioners में आपका स्वागत है! आपने सफलतापूर्वक लॉग इन किया है। अपनी कक्षा शुरू होने तक इंतजार करते समय, खुद को व्यस्त और मज़ेदार रखने के लिए कुछ त्वरित गेम खेलें।',
+                'play_games': '🎮 गेम खेलें',
+                'learn_modules': '📚 सीखने के मॉड्यूल',
+                'leaderboard': '🏆 लीडरबोर्ड',
+                'skill_performance': '📊 कौशल प्रदर्शन'
+            },
+            'kn': {
+                'welcome_user': 'ಸ್ವಾಗತ, {{ username }}!',
+                'profile': '👤 ಪ್ರೊಫೈಲ್',
+                'user_details': '👤 ಬಳಕೆದಾರ ವಿವರಗಳು',
+                'upload_documents': '📄 ದಾಖಲೆಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+                'logout': '🚪 ಲಾಗ್‌ಔಟ್',
+                'dashboard_title': 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
+                'dashboard_welcome': 'Hexecutioners ಗೆ ಸ್ವಾಗತ! ನೀವು ಯಶಸ್ವಿಯಾಗಿ ಲಾಗ್ ಇನ್ ಮಾಡಿದ್ದೀರಿ. ನಿಮ್ಮ ತರಗತಿ ಪ್ರಾರಂಭವಾಗುವವರೆಗೆ ಕಾಯುತ್ತಿರುವಾಗ, ನಿಮ್ಮನ್ನು ತೊಡಗಿಸಿಕೊಳ್ಳಲು ಮತ್ತು ಮೋಜು ಮಾಡಲು ಕೆಲವು ತ್ವರಿತ ಆಟಗಳನ್ನು ಆಡಿ.',
+                'play_games': '🎮 ಆಟಗಳನ್ನು ಆಡಿ',
+                'learn_modules': '📚 ಕಲಿಕೆ ಮಾಡ್ಯೂಲ್‌ಗಳು',
+                'leaderboard': '🏆 ಲೀಡರ್‌ಬೋರ್ಡ್',
+                'skill_performance': '📊 ಕೌಶಲ್ಯ ಕಾರ್ಯಕ್ಷಮತೆ'
+            }
+        };
+        
+        function changeLanguage(lang) {
+            localStorage.setItem('selectedLanguage', lang);
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update language in session via AJAX
+            fetch('/change-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language: lang })
+            });
+        }
+        
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('selectedLanguage') || '{{ lang }}';
+            document.getElementById('languageSelector').value = savedLang;
+            changeLanguage(savedLang);
+        });
+    </script>
 </body>
 </html>

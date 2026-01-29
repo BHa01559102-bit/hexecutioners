@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Assessment - Hexecutioners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 6px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .radio-option,
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .radio-option input[type="radio"],
+        .checkbox-option input[type="checkbox"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+        
+        .radio-option label,
+        .checkbox-option label {
+            margin: 0;
+            font-weight: 400;
+            cursor: pointer;
+        }
+        
+        .rating-scale {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+        
+        .rating-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: #666;
+        }
+        
+        .rating-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .rating-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .section-title {
+            color: #667eea;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-skip {
+            background: #6c757d;
+            color: white;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .btn-skip:hover {
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to Hexecutioners!</h1>
+            <p>Help us understand you better with a quick assessment</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            ✓ Form submitted successfully!
+        </div>
+        
+        <form id="assessmentForm">
+            <!-- Personal Information -->
+            <div class="section-title">📋 Personal Information</div>
+            
+            <div class="form-group">
+                <label for="age">Age Range <span class="required">*</span></label>
+                <select id="age" name="age" required>
+                    <option value="">Select your age range</option>
+                    <option value="18-20">18-20 years</option>
+                    <option value="21-23">21-23 years</option>
+                    <option value="24-25">24-25 years</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Passed in 12th Standard <span class="required">*</span></label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="std12Yes" name="passed12th" value="yes" required>
+                        <label for="std12Yes">Yes</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="std12No" name="passed12th" value="no">
+                        <label for="std12No">No</label>
+                    </div>
+                </div>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="gender">Gender <span class="required">*</span></label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select your gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <!-- Family Information -->
+            <div class="section-title">👨‍👩‍👧‍👦 Family Information</div>
+            
+            <div class="form-group">
+                <label for="familyMembers">Number of Family Members <span class="required">*</span></label>
+                <select id="familyMembers" name="familyMembers" required>
+                    <option value="">Select number of family members</option>
+                    <option value="less-than-4">Less than 4</option>
+                    <option value="less-than-6">Less than 6</option>
+                    <option value="less-than-9">Less than 9</option>
+                    <option value="10-or-more">10 or more</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="earningMembers">How Many Earning Members in the Family <span class="required">*</span></label>
+                <select id="earningMembers" name="earningMembers" required>
+                    <option value="">Select number of earning members</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3-or-more">3 or more</option>
+                    <option value="none">None</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="highestEducation">Highest Education Qualification in Family <span class="required">*</span></label>
+                <select id="highestEducation" name="highestEducation" required>
+                    <option value="">Select highest education in family</option>
+                    <option value="no-formal">No formal education</option>
+                    <option value="high-school">High school or equivalent</option>
+                    <option value="college">College and higher</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Severe Health Condition in Family <span class="required">*</span></label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="healthYes" name="familyHealthCondition" value="yes" required>
+                        <label for="healthYes">Yes</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="healthNo" name="familyHealthCondition" value="no">
+                        <label for="healthNo">No</label>
+                    </div>
+                </div>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Family Aware and Supportive <span class="required">*</span></label>
+                <select name="familySupport" required>
+                    <option value="">Select family support level</option>
+                    <option value="fully-supportive">Fully supportive</option>
+                    <option value="somewhat-supportive">Somewhat supportive</option>
+                    <option value="not-supportive">Not supportive</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <!-- Behavioral & Social -->
+            <div class="section-title">🤝 Behavioral & Social Skills</div>
+            
+            <div class="form-group">
+                <label>How Often Do You Complete Daily Chores <span class="required">*</span></label>
+                <select name="dailyChores" required>
+                    <option value="">Select frequency</option>
+                    <option value="always">Always</option>
+                    <option value="sometimes">Sometimes</option>
+                    <option value="never">Never</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Interest in Group Activities <span class="required">*</span></label>
+                <select name="groupActivities" required>
+                    <option value="">Select your interest level</option>
+                    <option value="interested">Interested</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="not-interested">Not interested</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>How Comfortable Are You Playing Sports or Team Games? (1-5) <span class="required">*</span></label>
+                <div class="rating-scale" id="sportsRating">
+                    <button type="button" class="rating-btn" data-value="1">1</button>
+                    <button type="button" class="rating-btn" data-value="2">2</button>
+                    <button type="button" class="rating-btn" data-value="3">3</button>
+                    <button type="button" class="rating-btn" data-value="4">4</button>
+                    <button type="button" class="rating-btn" data-value="5">5</button>
+                </div>
+                <input type="hidden" id="sportsRatingValue" name="sportsRating" required>
+            </div>
+            
+            <div class="form-group">
+                <label>How Comfortable Are You Talking to Other People? (1-5) <span class="required">*</span></label>
+                <div class="rating-scale" id="communicationRating">
+                    <button type="button" class="rating-btn" data-value="1">1</button>
+                    <button type="button" class="rating-btn" data-value="2">2</button>
+                    <button type="button" class="rating-btn" data-value="3">3</button>
+                    <button type="button" class="rating-btn" data-value="4">4</button>
+                    <button type="button" class="rating-btn" data-value="5">5</button>
+                </div>
+                <input type="hidden" id="communicationRatingValue" name="communicationRating" required>
+            </div>
+            
+            <div class="form-group">
+                <label>How Comfortable Are You Using Technology? <span class="required">*</span></label>
+                <select name="technologyComfort" required>
+                    <option value="">Select comfort level</option>
+                    <option value="yes">Yes</option>
+                    <option value="somewhat">Somewhat</option>
+                    <option value="no">No</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <!-- Program Participation & Commitment -->
+            <div class="section-title">📚 Program Participation & Commitment</div>
+            
+            <div class="form-group">
+                <label>Past Program Participation <span class="required">*</span></label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="pastProgYes" name="pastProgram" value="yes" required>
+                        <label for="pastProgYes">Yes</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="pastProgNo" name="pastProgram" value="no">
+                        <label for="pastProgNo">No</label>
+                    </div>
+                </div>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Do You Have a Clear Reason for Joining? <span class="required">*</span></label>
+                <select name="reasonForJoining" required>
+                    <option value="">Select your response</option>
+                    <option value="yes">Yes</option>
+                    <option value="maybe">Maybe</option>
+                    <option value="no">No</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Can You Commit 4-5 Hours Daily for 2 Months? <span class="required">*</span></label>
+                <select name="dailyCommitment" required>
+                    <option value="">Select your response</option>
+                    <option value="yes">Yes</option>
+                    <option value="maybe">Maybe</option>
+                    <option value="no">No</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Comfortable Travelling to the Center <span class="required">*</span></label>
+                <select name="travelComfort" required>
+                    <option value="">Select your response</option>
+                    <option value="yes">Yes</option>
+                    <option value="maybe">Maybe</option>
+                    <option value="no">No</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <!-- Health & Work Experience -->
+            <div class="section-title">💪 Health & Work Experience</div>
+            
+            <div class="form-group">
+                <label>Work Experience <span class="required">*</span></label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="workExpYes" name="workExperience" value="yes" required>
+                        <label for="workExpYes">Yes</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="workExpNo" name="workExperience" value="no">
+                        <label for="workExpNo">No</label>
+                    </div>
+                </div>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Physical Health Condition Affecting Participation <span class="required">*</span></label>
+                <select name="healthCondition" required>
+                    <option value="">Select your response</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                    <option value="minor">I have a minor condition but it won't affect me</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <!-- Program Impact & Skills -->
+            <div class="section-title">🚀 Program Impact & Skills</div>
+            
+            <div class="form-group">
+                <label>Does This Program Help Build Employment Skills? <span class="required">*</span></label>
+                <select name="programBenefit" required>
+                    <option value="">Select your belief level</option>
+                    <option value="strong">Strong belief</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="weak">Weak belief</option>
+                </select>
+                <div class="error-message"></div>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn-submit">Submit Assessment</button>
+                <button type="button" class="btn-skip" onclick="skipAssessment()">Skip for Now</button>
+            </div>
+            
+            <div class="loading" id="loading">Saving your assessment...</div>
+        </form>
+    </div>
+    
+    <script>
+        // Rating scale functionality
+        document.querySelectorAll('.rating-scale').forEach(scale => {
+            scale.querySelectorAll('.rating-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    scale.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    
+                    const scaleId = scale.id;
+                    const inputId = scaleId.replace('Rating', 'RatingValue');
+                    document.getElementById(inputId).value = btn.dataset.value;
+                });
+            });
+        });
+        
+        // Form submission
+        document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(document.getElementById('assessmentForm'));
+            const data = Object.fromEntries(formData);
+            
+            // Validate required fields
+            if (!data.sportsRating || !data.communicationRating) {
+                alert('Please complete all required fields');
+                return;
+            }
+            
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                const response = await fetch('/submit-assessment', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('successMessage').style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 2000);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error submitting assessment: ' + error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+        
+        // Skip assessment
+        function skipAssessment() {
+            if (confirm('Are you sure you want to skip this assessment?')) {
+                fetch('/skip-assessment', {method: 'POST'}).then(() => {
+                    window.location.href = '/dashboard';
+                });
+            }
+        }
+        
+        // Update progress bar as user scrolls through form
+        window.addEventListener('scroll', () => {
+            const form = document.getElementById('assessmentForm');
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = scrollTop / docHeight;
+            document.getElementById('progressFill').style.width = (scrollPercent * 100) + '%';
+        });
+    </script>
+</body>
+</html>

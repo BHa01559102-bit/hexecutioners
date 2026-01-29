@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Documents - Hexecutioners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .navbar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .navbar h1 {
+            color: #333;
+            font-size: 24px;
+        }
+        
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .container h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-align: center;
+        }
+        
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .document-card {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .document-card:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .document-card.uploaded {
+            border-style: solid;
+            border-color: #28a745;
+            background: #f0f8f4;
+        }
+        
+        .doc-icon {
+            font-size: 56px;
+            margin-bottom: 15px;
+        }
+        
+        .doc-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .doc-status {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .doc-status.uploaded {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .upload-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .download-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+        
+        .download-btn:hover {
+            background: #218838;
+        }
+        
+        .loading {
+            display: none;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .back-btn {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Hexecutioners</h1>
+        <div class="navbar-right">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>📄 Upload Documents</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">Upload your documents in JPG, PNG, or PDF format (Max 16MB)</p>
+        
+        <div class="success-message" id="successMessage"></div>
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="documents-grid">
+            <!-- Aadhar Card -->
+            <div class="document-card {% if documents.get('Aadhar Card') %}uploaded{% endif %}">
+                <div class="doc-icon">🆔</div>
+                <div class="doc-title">Aadhar Card</div>
+                <div class="doc-status {% if documents.get('Aadhar Card') %}uploaded{% endif %}">
+                    {% if documents.get('Aadhar Card') %}✓ Uploaded{% else %}Not Uploaded{% endif %}
+                </div>
+                <input type="file" class="upload-input" id="aadharInput" accept=".jpg,.jpeg,.png,.pdf" onchange="uploadDocument('Aadhar Card', 'aadharInput')">
+                {% if documents.get('Aadhar Card') %}
+                    <a href="{{ url_for('download_document', doc_id=documents.get('Aadhar Card').id) }}" class="download-btn">Download</a>
+                    <button class="upload-btn" onclick="document.getElementById('aadharInput').click()">Re-upload</button>
+                {% else %}
+                    <button class="upload-btn" onclick="document.getElementById('aadharInput').click()">Upload</button>
+                {% endif %}
+                <div class="loading" id="aadharLoading">Uploading...</div>
+            </div>
+            
+            <!-- 12th Marksheet -->
+            <div class="document-card {% if documents.get('12th Marksheet') %}uploaded{% endif %}">
+                <div class="doc-icon">📜</div>
+                <div class="doc-title">12th Marksheet</div>
+                <div class="doc-status {% if documents.get('12th Marksheet') %}uploaded{% endif %}">
+                    {% if documents.get('12th Marksheet') %}✓ Uploaded{% else %}Not Uploaded{% endif %}
+                </div>
+                <input type="file" class="upload-input" id="marksheetInput" accept=".jpg,.jpeg,.png,.pdf" onchange="uploadDocument('12th Marksheet', 'marksheetInput')">
+                {% if documents.get('12th Marksheet') %}
+                    <a href="{{ url_for('download_document', doc_id=documents.get('12th Marksheet').id) }}" class="download-btn">Download</a>
+                    <button class="upload-btn" onclick="document.getElementById('marksheetInput').click()">Re-upload</button>
+                {% else %}
+                    <button class="upload-btn" onclick="document.getElementById('marksheetInput').click()">Upload</button>
+                {% endif %}
+                <div class="loading" id="marksheetLoading">Uploading...</div>
+            </div>
+        </div>
+        
+        <div class="back-btn">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+    
+    <script>
+        function uploadDocument(docType, inputId) {
+            const fileInput = document.getElementById(inputId);
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                console.log('No file selected');
+                return;
+            }
+            
+            console.log('Uploading file:', file.name, 'Type:', docType);
+            
+            const loadingId = docType.replace(/\s+/g, '') + 'Loading';
+            const loadingEl = document.getElementById(loadingId);
+            
+            if (loadingEl) {
+                loadingEl.style.display = 'block';
+            }
+            
+            const formData = new FormData();
+            formData.append('document', file);
+            formData.append('document_type', docType);
+            
+            console.log('FormData created, starting fetch...');
+            
+            fetch('/upload-document', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (loadingEl) {
+                    loadingEl.style.display = 'none';
+                }
+                if (data.success) {
+                    console.log('Upload successful, reloading...');
+                    location.reload();
+                } else {
+                    console.error('Upload failed:', data.error);
+                    showError('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                if (loadingEl) {
+                    loadingEl.style.display = 'none';
+                }
+                showError('Upload failed: ' + error.toString());
+            });
+        }
+        
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            console.log('Error shown:', message);
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

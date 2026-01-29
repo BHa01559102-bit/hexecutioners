@@ -103,14 +103,36 @@
             font-weight: 600;
         }
         
-        .footer a:hover {
-            text-decoration: underline;
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .language-selector select {
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
+    <div class="language-selector">
+        <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <option value="kn">ಕನ್ನಡ</option>
+        </select>
+    </div>
+    
     <div class="container">
-        <h1>Sign Up</h1>
+        <h1 data-translate="signup_title">Sign Up</h1>
         
         {% if error %}
         <div class="error">{{ error }}</div>
@@ -118,31 +140,91 @@
         
         <form method="POST">
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username" data-translate="username">Username</label>
                 <input type="text" id="username" name="username" required>
             </div>
             
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email" data-translate="email">Email</label>
                 <input type="email" id="email" name="email" required>
             </div>
             
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" data-translate="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
             
             <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
+                <label for="confirm_password" data-translate="confirm_password">Confirm Password</label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
             </div>
             
-            <button type="submit">Sign Up</button>
+            <button type="submit" data-translate="signup_button">Sign Up</button>
         </form>
         
         <div class="footer">
-            Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+            <span data-translate="want_start_over">Want to start over?</span> <a href="{{ url_for('pre_assessment') }}" data-translate="back_assessment">Back to Assessment</a>
         </div>
     </div>
+    
+    <script>
+        // Language translations
+        const translations = {
+            'en': {
+                'signup_title': 'Sign Up',
+                'username': 'Username',
+                'email': 'Email',
+                'password': 'Password',
+                'confirm_password': 'Confirm Password',
+                'signup_button': 'Sign Up',
+                'want_start_over': 'Want to start over?',
+                'back_assessment': 'Back to Assessment'
+            },
+            'hi': {
+                'signup_title': 'साइन अप',
+                'username': 'उपयोगकर्ता नाम',
+                'email': 'ईमेल',
+                'password': 'पासवर्ड',
+                'confirm_password': 'पासवर्ड की पुष्टि करें',
+                'signup_button': 'साइन अप',
+                'want_start_over': 'दोबारा शुरू करना चाहते हैं?',
+                'back_assessment': 'मूल्यांकन पर वापस जाएं'
+            },
+            'kn': {
+                'signup_title': 'ಸೈನ್ ಅಪ್',
+                'username': 'ಬಳಕೆದಾರ ಹೆಸರು',
+                'email': 'ಇಮೇಲ್',
+                'password': 'ಪಾಸ್‌ವರ್ಡ್',
+                'confirm_password': 'ಪಾಸ್‌ವರ್ಡ್ ದೃಢೀಕರಿಸಿ',
+                'signup_button': 'ಸೈನ್ ಅಪ್',
+                'want_start_over': 'ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಲು ಬಯಸುತ್ತೀರಾ?',
+                'back_assessment': 'ಮೌಲ್ಯಮಾಪನಕ್ಕೆ ಹಿಂತಿರುಗಿ'
+            }
+        };
+
+        // Language switching functionality
+        function changeLanguage(lang) {
+            localStorage.setItem('selectedLanguage', lang);
+            
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            document.getElementById('languageSelect').value = savedLang;
+            changeLanguage(savedLang);
+        });
+
+        // Language selector event
+        document.getElementById('languageSelect').addEventListener('change', function(e) {
+            changeLanguage(e.target.value);
+        });
+    </script>
 </body>
 </html>

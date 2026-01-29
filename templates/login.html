@@ -106,11 +106,36 @@
         .footer a:hover {
             text-decoration: underline;
         }
-    </style>
+    <style>
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .language-selector select {
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            font-size: 12px;
+        }
 </head>
 <body>
+    <div class="language-selector">
+        <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <option value="kn">ಕನ್ನಡ</option>
+        </select>
+    </div>
+    
     <div class="container">
-        <h1>Login</h1>
+        <h1 data-translate="login_title">Login</h1>
         
         {% if error %}
         <div class="error">{{ error }}</div>
@@ -118,21 +143,75 @@
         
         <form method="POST">
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username" data-translate="username">Username</label>
                 <input type="text" id="username" name="username" required>
             </div>
             
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" data-translate="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
             
-            <button type="submit">Login</button>
+            <button type="submit" data-translate="login_button">Login</button>
         </form>
         
         <div class="footer">
-            Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a>
+            <span data-translate="no_account">Don't have an account?</span> <a href="{{ url_for('signup') }}" data-translate="signup_link">Sign up here</a>
         </div>
     </div>
+    
+    <script>
+        // Language translations
+        const translations = {
+            'en': {
+                'login_title': 'Login',
+                'username': 'Username',
+                'password': 'Password',
+                'login_button': 'Login',
+                'no_account': 'Don\'t have an account?',
+                'signup_link': 'Sign up here'
+            },
+            'hi': {
+                'login_title': 'लॉगिन',
+                'username': 'उपयोगकर्ता नाम',
+                'password': 'पासवर्ड',
+                'login_button': 'लॉगिन',
+                'no_account': 'खाता नहीं है?',
+                'signup_link': 'यहाँ साइन अप करें'
+            },
+            'kn': {
+                'login_title': 'ಲಾಗಿನ್',
+                'username': 'ಬಳಕೆದಾರ ಹೆಸರು',
+                'password': 'ಪಾಸ್‌ವರ್ಡ್',
+                'login_button': 'ಲಾಗಿನ್',
+                'no_account': 'ಖಾತೆ ಇಲ್ಲವೇ?',
+                'signup_link': 'ಇಲ್ಲಿ ಸೈನ್ ಅಪ್ ಮಾಡಿ'
+            }
+        };
+
+        // Language switching functionality
+        function changeLanguage(lang) {
+            localStorage.setItem('selectedLanguage', lang);
+            
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            document.getElementById('languageSelect').value = savedLang;
+            changeLanguage(savedLang);
+        });
+
+        // Language selector event
+        document.getElementById('languageSelect').addEventListener('change', function(e) {
+            changeLanguage(e.target.value);
+        });
+    </script>
 </body>
 </html>

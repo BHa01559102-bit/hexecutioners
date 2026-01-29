@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Lock 2.0 - Hexecutioners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .game-header {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .game-title h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .game-title p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .timer-section {
+            text-align: center;
+        }
+        
+        .timer {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .timer.warning {
+            color: #ff6b6b;
+            animation: pulse 0.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .score-section {
+            text-align: center;
+        }
+        
+        .score-section h3 {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .score {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .game-area {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question-type {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .option {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            background: #f9f9f9;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .option.correct {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border-color: #38f9d7;
+        }
+        
+        .option.incorrect {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+            color: white;
+            border-color: #ff4757;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+            font-size: 14px;
+            flex: 1;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-content h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+        
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .correct-count {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .button-group-modal {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .stats {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .stats h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .shape-display {
+            font-size: 40px;
+            margin: 15px 0;
+        }
+        
+        .chart-display {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <div class="game-title">
+                <h1>🔐 Pattern Lock 2.0</h1>
+                <p>Find patterns in 60-90 seconds</p>
+            </div>
+            <div class="timer-section">
+                <div class="timer" id="timerDisplay">60s</div>
+                <small>Time Remaining</small>
+            </div>
+            <div class="score-section">
+                <h3>Score</h3>
+                <div class="score" id="scoreDisplay">0</div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="question-container" id="questionContainer">
+                <div class="question-type" id="questionType">Numeric</div>
+                <div class="question-text" id="questionText">Loading question...</div>
+                <div id="specialDisplay"></div>
+                <div class="options-grid" id="optionsGrid"></div>
+            </div>
+            
+            <div class="button-group">
+                <button onclick="skipQuestion()">⏭ Skip</button>
+                <button onclick="submitAnswer()" id="submitBtn" disabled>Submit</button>
+                <button onclick="endGame()">← Back to Games</button>
+            </div>
+            
+            <div class="stats">
+                <h3>Session Stats</h3>
+                <div class="stat-item">
+                    <span>Correct Answers:</span>
+                    <span id="correctCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Questions Answered:</span>
+                    <span id="answeredCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Accuracy:</span>
+                    <span id="accuracyCount">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="endModal">
+        <div class="modal-content">
+            <h2>Time's Up!</h2>
+            <div class="correct-count" id="finalStats">0/0 Correct</div>
+            <div class="score-display" id="finalScore">0</div>
+            <div class="button-group-modal">
+                <button class="btn-secondary" onclick="goToGames()">Back to Games</button>
+                <button onclick="restartGame()">Play Again</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const QUESTION_TYPES = ['numeric', 'shape', 'word', 'chart'];
+        
+        let gameState = {
+            score: 0,
+            timeLeft: 60,
+            currentQuestion: 0,
+            correctAnswers: 0,
+            answeredQuestions: 0,
+            selectedAnswer: null,
+            gameOver: false,
+            questions: []
+        };
+        
+        // Question bank
+        const questionBank = {
+            numeric: [
+                { pattern: '2, 4, 8, 16, ?', answers: ['32', '24', '18', '30'], correct: 0 },
+                { pattern: '1, 1, 2, 3, 5, 8, ?', answers: ['13', '11', '10', '12'], correct: 0 },
+                { pattern: '5, 10, 20, 40, ?', answers: ['80', '50', '60', '70'], correct: 0 },
+                { pattern: '1, 4, 9, 16, 25, ?', answers: ['36', '30', '35', '40'], correct: 0 },
+                { pattern: '3, 6, 12, 24, ?', answers: ['48', '36', '42', '50'], correct: 0 }
+            ],
+            shape: [
+                { pattern: '▲ ■ ● ▲ ■ ?', answers: ['●', '■', '▲', '◆'], correct: 2 },
+                { pattern: '□ ◇ □ ◇ □ ?', answers: ['◇', '□', '◆', '△'], correct: 0 },
+                { pattern: '● ○ ● ○ ● ?', answers: ['○', '●', '◆', '■'], correct: 0 },
+                { pattern: '▲ ▼ ▲ ▼ ▲ ?', answers: ['▼', '▲', '◆', '◯'], correct: 0 },
+                { pattern: '◆ ● ■ ◆ ● ?', answers: ['■', '◆', '●', '▲'], correct: 0 }
+            ],
+            word: [
+                { pattern: 'Cat is to Kitten as Dog is to ?', answers: ['Puppy', 'Kitty', 'Calf', 'Foal'], correct: 0 },
+                { pattern: 'Fast is to Slow as Big is to ?', answers: ['Small', 'Tiny', 'Large', 'Huge'], correct: 0 },
+                { pattern: 'Hot is to Cold as Wet is to ?', answers: ['Dry', 'Damp', 'Moist', 'Fluid'], correct: 0 },
+                { pattern: 'Happy is to Sad as Light is to ?', answers: ['Dark', 'Dim', 'Bright', 'Shadow'], correct: 0 },
+                { pattern: 'King is to Queen as Prince is to ?', answers: ['Princess', 'Lady', 'Duchess', 'Maiden'], correct: 0 }
+            ],
+            chart: [
+                { pattern: 'Q1:10, Q2:20, Q3:15, Q4:25. What is the median?', answers: ['17.5', '20', '15', '18'], correct: 0 },
+                { pattern: 'Data: 5, 10, 15, 20. Average is ?', answers: ['12.5', '15', '10', '13'], correct: 0 },
+                { pattern: 'Values: 2, 4, 6, 8. Sum is ?', answers: ['20', '16', '24', '18'], correct: 0 },
+                { pattern: 'Range of 3, 7, 12, 5 is ?', answers: ['9', '6', '8', '10'], correct: 0 },
+                { pattern: 'Mode of 1, 2, 2, 3, 3, 3, 4 is ?', answers: ['3', '2', '2.5', '4'], correct: 0 }
+            ]
+        };
+        
+        function initGame() {
+            generateQuestionsSet();
+            loadQuestion();
+            startTimer();
+        }
+        
+        function generateQuestionsSet() {
+            gameState.questions = [];
+            QUESTION_TYPES.forEach(type => {
+                const qType = questionBank[type];
+                const q = qType[Math.floor(Math.random() * qType.length)];
+                gameState.questions.push({ type, ...q });
+            });
+            // Shuffle for variety
+            gameState.questions = gameState.questions.sort(() => Math.random() - 0.5);
+        }
+        
+        function loadQuestion() {
+            if (gameState.gameOver || gameState.currentQuestion >= gameState.questions.length) {
+                endGame();
+                return;
+            }
+            
+            gameState.selectedAnswer = null;
+            const q = gameState.questions[gameState.currentQuestion];
+            
+            document.getElementById('questionType').textContent = q.type.toUpperCase();
+            document.getElementById('questionText').textContent = q.pattern;
+            document.getElementById('submitBtn').disabled = true;
+            
+            // Special displays for certain types
+            const specialDisplay = document.getElementById('specialDisplay');
+            if (q.type === 'shape') {
+                specialDisplay.innerHTML = `<div class="shape-display">${q.pattern}</div>`;
+            } else if (q.type === 'chart') {
+                specialDisplay.innerHTML = `<div class="chart-display">Analyze the data carefully and find the answer</div>`;
+            } else {
+                specialDisplay.innerHTML = '';
+            }
+            
+            renderOptions(q);
+        }
+        
+        function renderOptions(q) {
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+            
+            q.answers.forEach((answer, index) => {
+                const option = document.createElement('div');
+                option.className = 'option';
+                option.textContent = answer;
+                option.onclick = () => selectAnswer(index);
+                optionsGrid.appendChild(option);
+            });
+        }
+        
+        function selectAnswer(index) {
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('.option')[index].classList.add('selected');
+            gameState.selectedAnswer = index;
+            document.getElementById('submitBtn').disabled = false;
+        }
+        
+        function submitAnswer() {
+            if (gameState.selectedAnswer === null) return;
+            
+            const q = gameState.questions[gameState.currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            if (gameState.selectedAnswer === q.correct) {
+                gameState.score += 100;
+                gameState.correctAnswers++;
+                options[gameState.selectedAnswer].classList.add('correct');
+            } else {
+                options[gameState.selectedAnswer].classList.add('incorrect');
+                options[q.correct].classList.add('correct');
+            }
+            
+            gameState.answeredQuestions++;
+            updateStats();
+            
+            document.getElementById('submitBtn').disabled = true;
+            
+            setTimeout(() => {
+                gameState.currentQuestion++;
+                loadQuestion();
+            }, 1500);
+        }
+        
+        function skipQuestion() {
+            gameState.currentQuestion++;
+            loadQuestion();
+        }
+        
+        function startTimer() {
+            const timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                updateTimer();
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        function updateTimer() {
+            const timerEl = document.getElementById('timerDisplay');
+            timerEl.textContent = gameState.timeLeft + 's';
+            
+            if (gameState.timeLeft <= 10) {
+                timerEl.classList.add('warning');
+            }
+        }
+        
+        function updateStats() {
+            document.getElementById('scoreDisplay').textContent = gameState.score;
+            document.getElementById('correctCount').textContent = gameState.correctAnswers;
+            document.getElementById('answeredCount').textContent = gameState.answeredQuestions;
+            
+            const accuracy = gameState.answeredQuestions > 0 
+                ? Math.round((gameState.correctAnswers / gameState.answeredQuestions) * 100)
+                : 0;
+            document.getElementById('accuracyCount').textContent = accuracy + '%';
+        }
+        
+        function endGame() {
+            gameState.gameOver = true;
+            
+            const modal = document.getElementById('endModal');
+            document.getElementById('finalStats').textContent = `${gameState.correctAnswers}/${gameState.answeredQuestions} Correct`;
+            document.getElementById('finalScore').textContent = gameState.score;
+            modal.classList.add('show');
+            
+            saveScore(gameState.score);
+        }
+        
+        function restartGame() {
+            gameState = {
+                score: 0,
+                timeLeft: 60,
+                currentQuestion: 0,
+                correctAnswers: 0,
+                answeredQuestions: 0,
+                selectedAnswer: null,
+                gameOver: false,
+                questions: []
+            };
+            document.getElementById('endModal').classList.remove('show');
+            initGame();
+        }
+        
+        function goToGames() {
+            window.location.href = '/games';
+        }
+        
+        async function saveScore(score) {
+            try {
+                const response = await fetch('/api/save-score', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        game_name: 'Pattern Lock 2.0',
+                        score: score,
+                        skills: ['Analytical Reasoning', 'Abstract Thinking', 'Problem-Solving']
+                    })
+                });
+                const data = await response.json();
+                console.log('Score saved:', data);
+            } catch (error) {
+                console.error('Error saving score:', error);
+            }
+        }
+        
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>

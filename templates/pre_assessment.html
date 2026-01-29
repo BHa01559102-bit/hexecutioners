@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexecutioners - Welcome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 6px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .radio-option input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+        
+        .radio-option label {
+            margin: 0;
+            font-weight: 400;
+            cursor: pointer;
+        }
+        
+        .rating-scale {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+        
+        .rating-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: #666;
+        }
+        
+        .rating-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .rating-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .section-title {
+            color: #667eea;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .result-container h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .dropout-score {
+            font-size: 48px;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .dropout-score.low {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .dropout-score.high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .result-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .action-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+            margin: 5px;
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.secondary {
+            background: #6c757d;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .action-btn.secondary:hover {
+            transform: translateY(-2px);
+        }
+        
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .language-selector select {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            font-size: 14px;
+        }
+        
+        .language-selector label {
+            font-size: 12px;
+            color: #666;
+            margin-right: 8px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-selector">
+        <label for="languageSelect" data-translate="select_language">Choose Your Language</label>
+        <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <option value="kn">ಕನ್ನಡ</option>
+        </select>
+    </div>
+    
+    <div class="container">
+        <div id="formContent">
+            <div class="header">
+                <h1 data-translate="welcome_title">Welcome to Hexecutioners!</h1>
+                <p data-translate="welcome_subtitle">Complete this assessment to proceed with signup</p>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <form id="assessmentForm">
+                <!-- Contact Information -->
+                <div class="section-title">👤 <span data-translate="contact_info">Contact Information</span></div>
+                
+                <div class="form-group">
+                    <label for="name" data-translate="full_name">Full Name <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="contact" data-translate="contact_number">Contact Number <span class="required">*</span></label>
+                    <input type="tel" id="contact" name="contact" required placeholder="10-digit mobile number" pattern="[0-9]{10}">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" data-translate="email_address">Email Address </label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="address" data-translate="address">Address <span class="required">*</span></label>
+                    <textarea id="address" name="address" required placeholder="Enter your complete address"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="referral" data-translate="how_did_you_know">How did you come to know about us? <span class="required">*</span></label>
+                    <select id="referral" name="referral" required>
+                        <option value="" data-translate="select_referral">Select how you heard about us</option>
+                        <option value="social_media" data-translate="social_media">Social Media</option>
+                        <option value="friend_family" data-translate="friend_family">Friend / Family</option>
+                        <option value="website" data-translate="website">Website</option>
+                        <option value="other" data-translate="other_source">Other</option>
+                    </select>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="section-title">📋 <span data-translate="personal_info">Personal Information</span></div>
+                
+                <div class="form-group">
+                    <label for="age" data-translate="age">Age <span class="required">*</span></label>
+                    <select id="age" name="age" required>
+                        <option value="" data-translate="select_age">Select your age</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="passed_12th">Passed in 12th Standard</label> <span class="required">*</span>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="std12Yes" name="passed12th" value="yes" required>
+                            <label for="std12Yes" data-translate="yes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="std12No" name="passed12th" value="no">
+                            <label for="std12No" data-translate="no">No</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender" data-translate="gender">Gender</label> <span class="required">*</span>
+                    <select id="gender" name="gender" required>
+                        <option value="" data-translate="select_gender">Select your gender</option>
+                        <option value="male" data-translate="male">Male</option>
+                        <option value="female" data-translate="female">Female</option>
+                        <option value="other" data-translate="other">Other</option>
+                    </select>
+                </div>
+                
+                <!-- Family Information -->
+                <div class="section-title">👨‍👩‍👧‍👦 <span data-translate="family_info">Family Information</span></div>
+                
+                <div class="form-group">
+                    <label for="Family_members" data-translate="family_members">Number of Family Members</label> <span class="required">*</span>
+                    <select id="Family_members" name="Family_members" required>
+                        <option value="" data-translate="select_family_members">Select number of family members</option>
+                        <option value="less than 4" data-translate="family_less_4">Less than 4</option>
+                        <option value="less than 6" data-translate="family_less_6">Less than 6</option>
+                        <option value="less than 9" data-translate="family_less_9">Less than 9</option>
+                        <option value="10 or more" data-translate="family_10_more">10 or more</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="Earning_members" data-translate="earning_members">How Many Earning Members in the Family</label> <span class="required">*</span>
+                    <select id="Earning_members" name="Earning_members" required>
+                        <option value="" data-translate="select_earning_members">Select number of earning members</option>
+                        <option value="1" data-translate="earning_1">1</option>
+                        <option value="2" data-translate="earning_2">2</option>
+                        <option value="3 or more" data-translate="earning_3_more">3 or more</option>
+                        <option value="none" data-translate="earning_none">None</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="Highest_education_in_family" data-translate="Highest_education_in_family">Highest Education Qualification in Family</label> <span class="required">*</span>
+                    <select id="Highest_education_in_family" name="Highest_education_in_family" required>
+                        <option value="" data-translate="select_highest_education">Select highest education in family</option>
+                        <option value="no formal education" data-translate="education_no_formal">No formal education</option>
+                        <option value="high school or equivalent" data-translate="education_high_school">High school or equivalent</option>
+                        <option value="college and higher" data-translate="education_college">College and higher</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="family_health_condition">Severe Health Condition in Family</label> <span class="required">*</span>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="healthYes" name="Severe_health_condition_in_family" value="yes" required>
+                            <label for="healthYes" data-translate="yes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="healthNo" name="Severe_health_condition_in_family" value="no">
+                            <label for="healthNo" data-translate="no">No</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="Family_support">Family Aware and Supportive</label> <span class="required">*</span>
+                    <select name="Family_support" required>
+                        <option value="" data-translate="select_family_support">Select family support level</option>
+                        <option value="fully supportive" data-translate="support_fully">Fully supportive</option>
+                        <option value="somewhat supportive" data-translate="support_somewhat">Somewhat supportive</option>
+                        <option value="not supportive" data-translate="support_not">Not supportive</option>
+                    </select>
+                </div>
+                
+                <!-- Behavioral & Social -->
+                <div class="section-title">🤝 <span data-translate="behavioral_social">Behavioral & Social Skills</span></div>
+                
+                <div class="form-group">
+                    <label data-translate="Daily_chores_completion">How Often Do You Complete Daily Chores</label> <span class="required">*</span>
+                    <select name="Daily_chores_completion" required>
+                        <option value="" data-translate="select_frequency">Select frequency</option>
+                        <option value="always" data-translate="always">Always</option>
+                        <option value="sometimes" data-translate="sometimes">Sometimes</option>
+                        <option value="never" data-translate="never">Never</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="Group_activities_participation">Interest in Group Activities</label> <span class="required">*</span>
+                    <select name="Group_activities_participation" required>
+                        <option value="" data-translate="select_interest_level">Select your interest level</option>
+                        <option value="interested" data-translate="interested">Interested</option>
+                        <option value="neutral" data-translate="neutral">Neutral</option>
+                        <option value="not interested" data-translate="not_interested">Not interested</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="sports_rating">How Comfortable Are You Playing Sports or Team Games? (1-5)</label> <span class="required">*</span>
+                    <div class="rating-scale" id="Sports_or_team_games_scale">
+                        <button type="button" class="rating-btn" data-value="1" data-translate="rating_1">1</button>
+                        <button type="button" class="rating-btn" data-value="2" data-translate="rating_2">2</button>
+                        <button type="button" class="rating-btn" data-value="3" data-translate="rating_3">3</button>
+                        <button type="button" class="rating-btn" data-value="4" data-translate="rating_4">4</button>
+                        <button type="button" class="rating-btn" data-value="5" data-translate="rating_5">5</button>
+                    </div>
+                    <input type="hidden" id="Sports_or_team_games_value" name="Sports_or_team_games" required>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="communication_rating">How Comfortable Are You Talking to Other People? (1-5)</label> <span class="required">*</span>
+                    <div class="rating-scale" id="communicationRating">
+                        <button type="button" class="rating-btn" data-value="1" data-translate="rating_1">1</button>
+                        <button type="button" class="rating-btn" data-value="2" data-translate="rating_2">2</button>
+                        <button type="button" class="rating-btn" data-value="3" data-translate="rating_3">3</button>
+                        <button type="button" class="rating-btn" data-value="4" data-translate="rating_4">4</button>
+                        <button type="button" class="rating-btn" data-value="5" data-translate="rating_5">5</button>
+                    </div>
+                    <input type="hidden" id="communicationRatingValue" name="Comfort_talking" required>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="technology_comfort">How Comfortable Are You Using Technology?</label> <span class="required">*</span>
+                    <select name="Comfortable_using_technology" required>
+                        <option value="" data-translate="select_comfort_level">Select comfort level</option>
+                        <option value="yes" data-translate="yes">Yes</option>
+                        <option value="somewhat" data-translate="somewhat">Somewhat</option>
+                        <option value="no" data-translate="no">No</option>
+                    </select>
+                </div>
+                
+                <!-- Program Participation & Commitment -->
+                <div class="section-title">📚 <span data-translate="program_participation">Program Participation & Commitment</span></div>
+                
+                <div class="form-group">
+                    <label data-translate="past_program">Past Program Participation</label> <span class="required">*</span>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="pastProgYes" name="Past_program_participation" value="yes" required>
+                            <label for="pastProgYes" data-translate="yes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="pastProgNo" name="Past_program_participation" value="no">
+                            <label for="pastProgNo" data-translate="no">No</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="reason_joining">Do You Have a Clear Reason for Joining?</label> <span class="required">*</span>
+                    <select name="reason_for_joining" required>
+                        <option value="" data-translate="select_response">Select your response</option>
+                        <option value="yes" data-translate="yes">Yes</option>
+                        <option value="maybe" data-translate="maybe">Maybe</option>
+                        <option value="no" data-translate="no">No</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="daily_commitment">Can You Commit 4-5 Hours Daily for 2 Months?</label> <span class="required">*</span>
+                    <select name="Commit_daily" required>
+                        <option value="" data-translate="select_response">Select your response</option>
+                        <option value="yes" data-translate="yes">Yes</option>
+                        <option value="maybe" data-translate="maybe">Maybe</option>
+                        <option value="no" data-translate="no">No</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="travel_comfort">Comfortable Travelling to the Center</label> <span class="required">*</span>
+                    <select name="Comfortable_travelling" required>
+                        <option value="" data-translate="select_response">Select your response</option>
+                        <option value="yes" data-translate="yes">Yes</option>
+                        <option value="maybe" data-translate="maybe">Maybe</option>
+                        <option value="no" data-translate="no">No</option>
+                    </select>
+                </div>
+                
+                <!-- Health & Work Experience -->
+                <div class="section-title">💪 <span data-translate="health_work">Health & Work Experience</span></div>
+                
+                <div class="form-group">
+                    <label data-translate="work_experience">Work Experience</label> <span class="required">*</span>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="workExpYes" name="Work_experience" value="yes" required>
+                            <label for="workExpYes" data-translate="yes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="workExpNo" name="Work_experience" value="no">
+                            <label for="workExpNo" data-translate="no">No</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label data-translate="health_condition">Physical Health Condition Affecting Participation</label> <span class="required">*</span>
+                    <select name="Physical_health_condition_affect_participation" required>
+                        <option value="" data-translate="select_health_response">Select your response</option>
+                        <option value="yes" data-translate="yes">Yes</option>
+                        <option value="no" data-translate="no">No</option>
+                        <option value="I have a minor condition but it won't affect me" data-translate="minor_condition">I have a minor condition but it won't affect me</option>
+                    </select>
+                </div>
+                
+                <!-- Program Impact & Skills -->
+                <div class="section-title">🚀 <span data-translate="program_impact">Program Impact & Skills</span></div>
+                
+                <div class="form-group">
+                    <label data-translate="program_benefit">Does This Program Help Build Employment Skills?</label> <span class="required">*</span>
+                    <select name="Trust_in_program" required>
+                        <option value="" data-translate="select_belief_level">Select your belief level</option>
+                        <option value="strong" data-translate="strong_belief">Strong belief</option>
+                        <option value="neutral" data-translate="neutral">Neutral</option>
+                        <option value="weak" data-translate="weak_belief">Weak belief</option>
+                    </select>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn-submit" data-translate="submit_assessment">Submit Assessment</button>
+                </div>
+                
+                <div class="loading" id="loading" data-translate="analyzing_profile">Analyzing your profile...</div>
+            </form>
+        </div>
+        
+        <div id="resultContent" class="result-container">
+            <h2 data-translate="assessment_results">Assessment Results</h2>
+            <div class="dropout-score" id="dropoutScore"></div>
+            <div class="result-message" id="resultMessage"></div>
+            <div id="actionButtons"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Language translations (embedded for simplicity)
+        const translations = {
+            'en': {
+                'select_language': 'Choose Your Language',
+                'welcome_title': 'Welcome to Hexecutioners!',
+                'welcome_subtitle': 'Complete this assessment to proceed with signup',
+                'personal_info': 'Personal Information',
+                'family_info': 'Family Information',
+                'behavioral_social': 'Behavioral & Social Skills',
+                'program_participation': 'Program Participation & Commitment',
+                'health_work': 'Health & Work Experience',
+                'program_impact': 'Program Impact & Skills',
+                'age_range': 'Age Range',
+                'select_age': 'Select your age',
+                'age_18_20': '18-20 years',
+                'age_21_23': '21-23 years',
+                'age_24_25': '24-25 years',
+                'passed_12th': 'Passed in 12th Standard',
+                'yes': 'Yes',
+                'no': 'No',
+                'gender': 'Gender',
+                'select_gender': 'Select your gender',
+                'male': 'Male',
+                'female': 'Female',
+                'other': 'Other',
+                'family_members': 'Number of Family Members',
+                'select_family_members': 'Select number of family members',
+                'family_less_4': 'Less than 4',
+                'family_less_6': 'Less than 6',
+                'family_less_9': 'Less than 9',
+                'family_10_more': '10 or more',
+                'earning_members': 'How Many Earning Members in the Family',
+                'select_earning_members': 'Select number of earning members',
+                'earning_none': 'None',
+                'earning_1': '1',
+                'earning_2': '2',
+                'earning_3_more': '3 or more',
+                'highest_education': 'Highest Education Qualification in Family',
+                'select_highest_education': 'Select highest education in family',
+                'education_no_formal': 'No formal education',
+                'education_high_school': 'High school or equivalent',
+                'education_college': 'College and higher',
+                'family_health_condition': 'Severe Health Condition in Family',
+                'family_support': 'Family Aware and Supportive',
+                'select_family_support': 'Select family support level',
+                'support_fully': 'Fully supportive',
+                'support_somewhat': 'Somewhat supportive',
+                'support_not': 'Not supportive',
+                'daily_chores': 'How Often Do You Complete Daily Chores',
+                'select_frequency': 'Select frequency',
+                'always': 'Always',
+                'sometimes': 'Sometimes',
+                'never': 'Never',
+                'group_activities': 'Interest in Group Activities',
+                'select_interest_level': 'Select your interest level',
+                'interested': 'Interested',
+                'neutral': 'Neutral',
+                'not_interested': 'Not interested',
+                'sports_rating': 'How Comfortable Are You Playing Sports or Team Games? (1-5)',
+                'communication_rating': 'How Comfortable Are You Talking to Other People? (1-5)',
+                'technology_comfort': 'How Comfortable Are You Using Technology?',
+                'select_comfort_level': 'Select comfort level',
+                'past_program': 'Past Program Participation',
+                'reason_joining': 'Do You Have a Clear Reason for Joining?',
+                'select_response': 'Select your response',
+                'maybe': 'Maybe',
+                'daily_commitment': 'Can You Commit 4-5 Hours Daily for 2 Months?',
+                'travel_comfort': 'Comfortable Travelling to the Center',
+                'work_experience': 'Work Experience',
+                'health_condition': 'Physical Health Condition Affecting Participation',
+                'select_health_response': 'Select your response',
+                'minor_condition': 'I have a minor condition but it won\'t affect me',
+                'program_benefit': 'Does This Program Help Build Employment Skills?',
+                'select_belief_level': 'Select your belief level',
+                'strong_belief': 'Strong belief',
+                'weak_belief': 'Weak belief',
+                'submit_assessment': 'Submit Assessment',
+                'analyzing_profile': 'Analyzing your profile...',
+                'assessment_results': 'Assessment Results',
+                'high_dropout_risk': 'High Dropout Risk Detected',
+                'high_risk_message': 'Based on your profile, there\'s a high probability of program dropout. We recommend reconsidering your participation or seeking additional support.',
+                'good_match': 'Good Match for Our Program',
+                'good_match_message': 'Your profile shows good commitment potential. We\'d love to have you in our program!',
+                'proceed_signup': 'Proceed to Signup',
+                'signup_disabled': 'Signup Disabled - High Risk Profile',
+                'go_back': 'Go Back',
+                'contact_shortly': 'Thank You for Your Interest',
+                'contact_message': 'We will review your profile and contact you shortly with further information.',
+                'required': 'Required',
+                'select_option': 'Select an option',
+                'rating_1': '1',
+                'rating_2': '2',
+                'rating_3': '3',
+                'rating_4': '4',
+                'rating_5': '5'
+            },
+            'hi': {
+                'select_language': 'अपनी भाषा चुनें',
+                'welcome_title': 'हैक्सेक्यूशनर्स में आपका स्वागत है!',
+                'welcome_subtitle': 'साइनअप जारी रखने के लिए यह मूल्यांकन पूरा करें',
+                'personal_info': 'व्यक्तिगत जानकारी',
+                'family_info': 'परिवार की जानकारी',
+                'behavioral_social': 'व्यवहारिक और सामाजिक कौशल',
+                'program_participation': 'कार्यक्रम भागीदारी और प्रतिबद्धता',
+                'health_work': 'स्वास्थ्य और कार्य अनुभव',
+                'program_impact': 'कार्यक्रम प्रभाव और कौशल',
+                'age_range': 'आयु सीमा',
+                'select_age': 'अपनी आयु सीमा चुनें',
+                'age_18_20': '18-20 साल',
+                'age_21_23': '21-23 साल',
+                'age_24_25': '24-25 साल',
+                'passed_12th': '12वीं कक्षा उत्तीर्ण',
+                'yes': 'हाँ',
+                'no': 'नहीं',
+                'gender': 'लिंग',
+                'select_gender': 'अपना लिंग चुनें',
+                'male': 'पुरुष',
+                'female': 'महिला',
+                'other': 'अन्य',
+                'family_members': 'परिवार के सदस्यों की संख्या',
+                'select_family_members': 'परिवार के सदस्यों की संख्या चुनें',
+                'family_less_4': '4 से कम',
+                'family_less_6': '6 से कम',
+                'family_less_9': '9 से कम',
+                'family_10_more': '10 या अधिक',
+                'earning_members': 'परिवार में कितने कमाने वाले सदस्य हैं',
+                'select_earning_members': 'कमाने वाले सदस्यों की संख्या चुनें',
+                'earning_none': 'कोई नहीं',
+                'earning_1': '1',
+                'earning_2': '2',
+                'earning_3_more': '3 या अधिक',
+                'highest_education': 'परिवार में उच्चतम शिक्षा योग्यता',
+                'select_highest_education': 'परिवार में उच्चतम शिक्षा चुनें',
+                'education_no_formal': 'कोई औपचारिक शिक्षा नहीं',
+                'education_high_school': 'हाई स्कूल या समकक्ष',
+                'education_college': 'कॉलेज और उच्चतर',
+                'family_health_condition': 'परिवार में गंभीर स्वास्थ्य समस्या',
+                'family_support': 'परिवार जागरूक और सहायक',
+                'select_family_support': 'परिवार सहायता स्तर चुनें',
+                'support_fully': 'पूर्ण सहायक',
+                'support_somewhat': 'कुछ हद तक सहायक',
+                'support_not': 'सहायक नहीं',
+                'daily_chores': 'आप दैनिक काम कितनी बार पूरा करते हैं',
+                'select_frequency': 'आवृत्ति चुनें',
+                'always': 'हमेशा',
+                'sometimes': 'कभी-कभी',
+                'never': 'कभी नहीं',
+                'group_activities': 'समूह गतिविधियों में रुचि',
+                'select_interest_level': 'अपना रुचि स्तर चुनें',
+                'interested': 'रुचि रखता हूं',
+                'neutral': 'तटस्थ',
+                'not_interested': 'रुचि नहीं रखता',
+                'sports_rating': 'खेल खेलने या टीम खेलों में आप कितने सहज हैं? (1-5)',
+                'communication_rating': 'दूसरों से बात करने में आप कितने सहज हैं? (1-5)',
+                'technology_comfort': 'तकनीक का उपयोग करने में आप कितने सहज हैं?',
+                'select_comfort_level': 'सहजता स्तर चुनें',
+                'past_program': 'पिछले कार्यक्रम में भागीदारी',
+                'reason_joining': 'आपके पास शामिल होने का स्पष्ट कारण है?',
+                'select_response': 'अपना उत्तर चुनें',
+                'maybe': 'शायद',
+                'daily_commitment': 'क्या आप 2 महीने के लिए प्रतिदिन 4-5 घंटे प्रतिबद्ध कर सकते हैं?',
+                'travel_comfort': 'केंद्र तक यात्रा करने में सहज',
+                'work_experience': 'कार्य अनुभव',
+                'health_condition': 'भागीदारी को प्रभावित करने वाली शारीरिक स्वास्थ्य स्थिति',
+                'select_health_response': 'अपना उत्तर चुनें',
+                'minor_condition': 'मेरे पास मामूली समस्या है लेकिन यह मुझे प्रभावित नहीं करेगी',
+                'program_benefit': 'क्या यह कार्यक्रम रोजगार कौशल बनाने में मदद करता है?',
+                'select_belief_level': 'अपना विश्वास स्तर चुनें',
+                'strong_belief': 'मजबूत विश्वास',
+                'weak_belief': 'कमजोर विश्वास',
+                'submit_assessment': 'मूल्यांकन सबमिट करें',
+                'analyzing_profile': 'आपकी प्रोफ़ाइल का विश्लेषण किया जा रहा है...',
+                'assessment_results': 'मूल्यांकन परिणाम',
+                'high_dropout_risk': 'उच्च ड्रॉपआउट जोखिम का पता चला',
+                'high_risk_message': 'आपकी प्रोफ़ाइल के आधार पर, कार्यक्रम से ड्रॉपआउट की उच्च संभावना है। हम अनुशंसा करते हैं कि आप अपनी भागीदारी पर पुनर्विचार करें या अतिरिक्त सहायता प्राप्त करें।',
+                'good_match': 'हमारे कार्यक्रम के लिए अच्छा मिलान',
+                'good_match_message': 'आपकी प्रोफ़ाइल में अच्छी प्रतिबद्धता क्षमता दिखाई देती है। हमें खुशी होगी कि आप हमारे कार्यक्रम में शामिल हों!',
+                'proceed_signup': 'साइनअप जारी रखें',
+                'signup_disabled': 'साइनअप अक्षम - उच्च जोखिम प्रोफ़ाइल',
+                'go_back': 'वापस जाएं',
+                'contact_shortly': 'आपकी रुचि के लिए धन्यवाद',
+                'contact_message': 'हम आपकी प्रोफ़ाइल की समीक्षा करेंगे और शीघ्र ही आपको और जानकारी के साथ संपर्क करेंगे।',
+                'required': 'आवश्यक',
+                'select_option': 'एक विकल्प चुनें',
+                'rating_1': '1',
+                'rating_2': '2',
+                'rating_3': '3',
+                'rating_4': '4',
+                'rating_5': '5'
+            },
+            'kn': {
+                'select_language': 'ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'welcome_title': 'ಹೆಕ್ಸೆಕ್ಯೂಶನರ್ಸ್‌ಗೆ ಸ್ವಾಗತ!',
+                'welcome_subtitle': 'ಸೈನ್‌ಅಪ್ ಮುಂದುವರಿಸಲು ಈ ಮೌಲ್ಯಮಾಪನವನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ',
+                'personal_info': 'ವೈಯಕ್ತಿಕ ಮಾಹಿತಿ',
+                'family_info': 'ಕುಟುಂಬದ ಮಾಹಿತಿ',
+                'behavioral_social': 'ವರ್ತನೆ ಮತ್ತು ಸಾಮಾಜಿಕ ಕೌಶಲ್ಯಗಳು',
+                'program_participation': 'ಕಾರ್ಯಕ್ರಮ ಭಾಗವಹಿಸುವಿಕೆ ಮತ್ತು ಬದ್ಧತೆ',
+                'health_work': 'ಆರೋಗ್ಯ ಮತ್ತು ಕೆಲಸದ ಅನುಭವ',
+                'program_impact': 'ಕಾರ್ಯಕ್ರಮದ ಪ್ರಭಾವ ಮತ್ತು ಕೌಶಲ್ಯಗಳು',
+                'age_range': 'ವಯಸ್ಸಿನ ವ್ಯಾಪ್ತಿ',
+                'select_age': 'ನಿಮ್ಮ ವಯಸ್ಸಿನ ವ್ಯಾಪ್ತಿಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'age_18_20': '18-20 ವರ್ಷಗಳು',
+                'age_21_23': '21-23 ವರ್ಷಗಳು',
+                'age_24_25': '24-25 ವರ್ಷಗಳು',
+                'passed_12th': '12ನೇ ತರಗತಿ ಉತ್ತೀರ್ಣ',
+                'yes': 'ಹೌದು',
+                'no': 'ಇಲ್ಲ',
+                'gender': 'ಲಿಂಗ',
+                'select_gender': 'ನಿಮ್ಮ ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'male': 'ಪುರುಷ',
+                'female': 'ಸ್ತ್ರೀ',
+                'other': 'ಇತರೆ',
+                'family_members': 'ಕುಟುಂಬದ ಸದಸ್ಯರ ಸಂಖ್ಯೆ',
+                'select_family_members': 'ಕುಟುಂಬದ ಸದಸ್ಯರ ಸಂಖ್ಯೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'family_less_4': '4 ಕ್ಕಿಂತ ಕಡಿಮೆ',
+                'family_less_6': '6 ಕ್ಕಿಂತ ಕಡಿಮೆ',
+                'family_less_9': '9 ಕ್ಕಿಂತ ಕಡಿಮೆ',
+                'family_10_more': '10 ಅಥವಾ ಹೆಚ್ಚು',
+                'earning_members': 'ಕುಟುಂಬದಲ್ಲಿ ಎಷ್ಟು ಗಳಿಸುವ ಸದಸ್ಯರು ಇದ್ದಾರೆ',
+                'select_earning_members': 'ಗಳಿಸುವ ಸದಸ್ಯರ ಸಂಖ್ಯೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'earning_none': 'ಯಾವುದೂ ಇಲ್ಲ',
+                'earning_1': '1',
+                'earning_2': '2',
+                'earning_3_more': '3 ಅಥವಾ ಹೆಚ್ಚು',
+                'highest_education': 'ಕುಟುಂಬದಲ್ಲಿ ಅತ್ಯುನ್ನತ ಶಿಕ್ಷಣ ಅರ್ಹತೆ',
+                'select_highest_education': 'ಕುಟುಂಬದಲ್ಲಿ ಅತ್ಯುನ್ನತ ಶಿಕ್ಷಣವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'education_no_formal': 'ಯಾವುದೇ ಔಪಚಾರಿಕ ಶಿಕ್ಷಣವಿಲ್ಲ',
+                'education_high_school': 'ಹೈ ಸ್ಕೂಲ್ ಅಥವಾ ಸಮಾನ',
+                'education_college': 'ಕಾಲೇಜು ಮತ್ತು ಹೆಚ್ಚಿನ',
+                'family_health_condition': 'ಕುಟುಂಬದಲ್ಲಿ ಗಂಭೀರ ಆರೋಗ್ಯ ಸಮಸ್ಯೆ',
+                'family_support': 'ಕುಟುಂಬ ಜಾಗೃತ ಮತ್ತು ಬೆಂಬಲಕಾರಿ',
+                'select_family_support': 'ಕುಟುಂಬ ಬೆಂಬಲ ಮಟ್ಟವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'support_fully': 'ಪೂರ್ಣ ಬೆಂಬಲಕಾರಿ',
+                'support_somewhat': 'ಕೆಲವು ಮಟ್ಟದಲ್ಲಿ ಬೆಂಬಲಕಾರಿ',
+                'support_not': 'ಬೆಂಬಲಕಾರಿ ಅಲ್ಲ',
+                'daily_chores': 'ನೀವು ದೈನಂದಿನ ಕೆಲಸಗಳನ್ನು ಎಷ್ಟು ಬಾರಿ ಪೂರ್ಣಗೊಳಿಸುತ್ತೀರಿ',
+                'select_frequency': 'ಆವರ್ತನೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'always': 'ಯಾವಾಗಲೂ',
+                'sometimes': 'ಕೆಲವೊಮ್ಮೆ',
+                'never': 'ಎಂದೂ ಇಲ್ಲ',
+                'group_activities': 'ಗುಂಪು ಚಟುವಟಿಕೆಗಳಲ್ಲಿ ಆಸಕ್ತಿ',
+                'select_interest_level': 'ನಿಮ್ಮ ಆಸಕ್ತಿಯ ಮಟ್ಟವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'interested': 'ಆಸಕ್ತಿ ಇದೆ',
+                'neutral': 'ತಟಸ್ಥ',
+                'not_interested': 'ಆಸಕ್ತಿ ಇಲ್ಲ',
+                'sports_rating': 'ಕ್ರೀಡೆ ಆಡುವುದು ಅಥವಾ ತಂಡದ ಆಟಗಳಲ್ಲಿ ನೀವು ಎಷ್ಟು ಸುಖವಾಗಿರುತ್ತೀರಿ? (1-5)',
+                'communication_rating': 'ಇತರರೊಂದಿಗೆ ಮಾತನಾಡುವುದರಲ್ಲಿ ನೀವು ಎಷ್ಟು ಸುಖವಾಗಿರುತ್ತೀರಿ? (1-5)',
+                'technology_comfort': 'ತಂತ್ರಜ್ಞಾನವನ್ನು ಬಳಸುವುದರಲ್ಲಿ ನೀವು ಎಷ್ಟು ಸುಖವಾಗಿರುತ್ತೀರಿ?',
+                'select_comfort_level': 'ಸುಖದ ಮಟ್ಟವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'past_program': 'ಹಿಂದಿನ ಕಾರ್ಯಕ್ರಮ ಭಾಗವಹಿಸುವಿಕೆ',
+                'reason_joining': 'ನೀವು ಸೇರಲು ಸ್ಪಷ್ಟ ಕಾರಣವನ್ನು ಹೊಂದಿದ್ದೀರಾ?',
+                'select_response': 'ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'maybe': 'ಇರಬಹುದು',
+                'daily_commitment': 'ನೀವು 2 ತಿಂಗಳ ಕಾಲ ದೈನಂದಿನ 4-5 ಗಂಟೆಗಳನ್ನು ಬದ್ಧರಾಗಿಸಬಹುದೇ?',
+                'travel_comfort': 'ಕೇಂದ್ರಕ್ಕೆ ಪ್ರಯಾಣಿಸುವುದರಲ್ಲಿ ಸುಖ',
+                'work_experience': 'ಕೆಲಸದ ಅನುಭವ',
+                'health_condition': 'ಭಾಗವಹಿಸುವಿಕೆಯ ಮೇಲೆ ಪ್ರಭಾವ ಬೀರುವ ದೈಹಿಕ ಆರೋಗ್ಯ ಸ್ಥಿತಿ',
+                'select_health_response': 'ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'minor_condition': 'ನನಗೆ ಸಣ್ಣ ಸಮಸ್ಯೆ ಇದೆ ಆದರೆ ಅದು ನನ್ನ ಮೇಲೆ ಪ್ರಭಾವ ಬೀರದು',
+                'program_benefit': 'ಈ ಕಾರ್ಯಕ್ರಮ ಉದ್ಯೋಗ ಕೌಶಲ್ಯಗಳನ್ನು ನಿರ್ಮಿಸಲು ಸಹಾಯ ಮಾಡುತ್ತದೆಯೇ?',
+                'select_belief_level': 'ನಿಮ್ಮ ನಂಬಿಕೆಯ ಮಟ್ಟವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ',
+                'strong_belief': 'ದೃಢ ನಂಬಿಕೆ',
+                'weak_belief': 'ದುರ್ಬಲ ನಂಬಿಕೆ',
+                'submit_assessment': 'ಮೌಲ್ಯಮಾಪನವನ್ನು ಸಲ್ಲಿಸಿ',
+                'analyzing_profile': 'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಅನ್ನು ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...',
+                'assessment_results': 'ಮೌಲ್ಯಮಾಪನ ಫಲಿತಾಂಶಗಳು',
+                'high_dropout_risk': 'ಹೆಚ್ಚಿನ ಡ್ರಾಪ್‌ಔಟ್ ಅಪಾಯ ಪತ್ತೆಯಾಗಿದೆ',
+                'high_risk_message': 'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಆಧರಿಸಿ, ಕಾರ್ಯಕ್ರಮದಿಂದ ಡ್ರಾಪ್‌ಔಟ್ ಆಗುವ ಹೆಚ್ಚಿನ ಸಾಧ್ಯತೆ ಇದೆ. ನಾವು ಸಲಹೆ ಮಾಡುತ್ತೇವೆ ನಿಮ್ಮ ಭಾಗವಹಿಸುವಿಕೆಯನ್ನು ಮರುಪರಿಶೀಲಿಸಿ ಅಥವಾ ಹೆಚ್ಚಿನ ಬೆಂಬಲವನ್ನು ಪಡೆಯಿರಿ.',
+                'good_match': 'ನಮ್ಮ ಕಾರ್ಯಕ್ರಮಕ್ಕೆ ಉತ್ತಮ ಹೊಂದಾಣಿಕೆ',
+                'good_match_message': 'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಉತ್ತಮ ಬದ್ಧತೆ ಸಾಮರ್ಥ್ಯವನ್ನು ತೋರಿಸುತ್ತದೆ. ನಮಗೆ ಸಂತೋಷವಾಗುತ್ತದೆ ನೀವು ನಮ್ಮ ಕಾರ್ಯಕ್ರಮದಲ್ಲಿ ಸೇರಿಕೊಳ್ಳಿ!',
+                'proceed_signup': 'ಸೈನ್‌ಅಪ್ ಮುಂದುವರಿಸಿ',
+                'signup_disabled': 'ಸೈನ್‌ಅಪ್ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ - ಹೆಚ್ಚಿನ ಅಪಾಯ ಪ್ರೊಫೈಲ್',
+                'go_back': 'ಹಿಂತಿರುಗಿ',
+                'contact_shortly': 'ನಿಮ್ಮ ಆಸಕ್ತಿಗೆ ಧನ್ಯವಾದಗಳು',
+                'contact_message': 'ನಾವು ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಅನ್ನು ವಿಮರ್ಶಿಸುತ್ತೇವೆ ಮತ್ತು ಶೀಘ್ರದಲ್ಲೇ ಮುಂದಿನ ಮಾಹಿತಿಯೊಂದಿಗೆ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.',
+                'required': 'ಅಗತ್ಯ',
+                'select_option': 'ಒಂದು ಆಯ್ಕೆಯನ್ನು ಮಾಡಿ',
+                'rating_1': '1',
+                'rating_2': '2',
+                'rating_3': '3',
+                'rating_4': '4',
+                'rating_5': '5'
+            }
+        };
+
+        // Language switching functionality
+        function changeLanguage(lang) {
+            // Store language preference
+            localStorage.setItem('selectedLanguage', lang);
+            
+            // Update all elements with data-translate attributes
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update select options
+            document.querySelectorAll('option[data-translate]').forEach(option => {
+                const key = option.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update button text
+            document.querySelectorAll('button[data-translate]').forEach(button => {
+                const key = button.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    button.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            document.getElementById('languageSelect').value = savedLang;
+            changeLanguage(savedLang);
+        });
+
+        // Language selector event
+        document.getElementById('languageSelect').addEventListener('change', function(e) {
+            changeLanguage(e.target.value);
+        });
+        // Rating scale functionality
+        document.querySelectorAll('.rating-scale').forEach(scale => {
+            scale.querySelectorAll('.rating-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    scale.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    
+                    const scaleId = scale.id;
+                    let inputId;
+                    
+                    // Map scale IDs to their corresponding input IDs
+                    if (scaleId === 'Sports_or_team_games_scale') {
+                        inputId = 'Sports_or_team_games_value';
+                    } else if (scaleId === 'communicationRating') {
+                        inputId = 'communicationRatingValue';
+                    } else {
+                        // Fallback: try replacing 'Rating' with 'RatingValue'
+                        inputId = scaleId.replace('Rating', 'RatingValue');
+                    }
+                    
+                    const inputElement = document.getElementById(inputId);
+                    if (inputElement) {
+                        inputElement.value = btn.dataset.value;
+                    }
+                });
+            });
+        });
+        
+        // Form submission
+        document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(document.getElementById('assessmentForm'));
+            const rawData = Object.fromEntries(formData);
+            
+            // Map form field names to model feature names
+            const data = {
+                // Contact Info (not used by model, but kept for record)
+                name: rawData.name,
+                contact: rawData.contact,
+                email: rawData.email,
+                address: rawData.address,
+                referral: rawData.referral,
+                
+                // Personal Info
+                Age: parseInt(rawData.age),
+                Gender: rawData.gender,
+                passed12th: rawData.passed12th,
+                
+                // Family Info
+                Family_members: rawData.Family_members,
+                Earning_members_in_family: rawData.Earning_members,
+                Highest_education_in_family: rawData.Highest_education_in_family,
+                Severe_health_condition_in_family: rawData.Severe_health_condition_in_family,
+                Family_support: rawData.Family_support,
+                
+                // Behavioral & Social
+                Daily_chores_completion: rawData.Daily_chores_completion,
+                Group_activities_participation: rawData.Group_activities_participation,
+                Sports_or_team_games: parseInt(rawData.Sports_or_team_games),
+                Comfort_talking: parseInt(rawData.Comfort_talking),
+                Comfortable_using_technology: rawData.Comfortable_using_technology,
+                
+                // Program Participation
+                Past_program_participation: rawData.Past_program_participation,
+                reason_for_joining: rawData.reason_for_joining,
+                Commit_daily: rawData.Commit_daily,
+                Comfortable_travelling: rawData.Comfortable_travelling,
+                
+                // Health & Work
+                Work_experience: rawData.Work_experience,
+                Physical_health_condition_affect_participation: rawData.Physical_health_condition_affect_participation,
+                Trust_in_program: rawData.Trust_in_program,
+                
+                language: document.getElementById('languageSelect').value
+            };
+            
+            // Validate required fields
+            if (!data.Sports_or_team_games || !data.Comfort_talking) {
+                const lang = data.language;
+                const alertMessage = translations[lang]['complete_required'] || 'Please complete all required fields';
+                alert(alertMessage);
+                return;
+            }
+            
+            document.getElementById('loading').style.display = 'block';
+            
+            console.log('Data being sent to model:', data);
+            
+            try {
+                const response = await fetch('/submit-pre-assessment', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (result.success) {
+                    showResults(result.dropout_percentage, result.can_signup);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                alert('Error submitting assessment: ' + error);
+            }
+        });
+        
+        function showResults(dropoutPercentage, canSignup) {
+            const lang = document.getElementById('languageSelect').value;
+            
+            // If eligible (dropout <= 70), redirect to signup directly
+            if (canSignup) {
+                // Redirect to signup page directly without showing results
+                window.location.href = '/signup';
+                return;
+            }
+            
+            // If not eligible (dropout > 70), show "we will contact you" message
+            document.getElementById('formContent').style.display = 'none';
+            document.getElementById('resultContent').style.display = 'block';
+            
+            const scoreDiv = document.getElementById('dropoutScore');
+            // Hide the dropout percentage - don't show it to user
+            scoreDiv.style.display = 'none';
+            
+            const messageDiv = document.getElementById('resultMessage');
+            const contactTitle = translations[lang]['contact_shortly'] || 'Thank You for Your Interest';
+            const contactMessage = translations[lang]['contact_message'] || 'We will review your profile and contact you shortly with further information.';
+            messageDiv.innerHTML = `<strong>${contactTitle}</strong><br>${contactMessage}`;
+            
+            const buttonsDiv = document.getElementById('actionButtons');
+            const goBackText = translations[lang]['go_back'] || 'Go Back';
+            buttonsDiv.innerHTML = `<a href="/" class="action-btn secondary">${goBackText}</a>`;
+        }
+    </script>
+</body>
+</html>

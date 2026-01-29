@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Hexecutioners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .your-rank {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .rank-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .rank-stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .rank-stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .leaderboard {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .leaderboard-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .leaderboard-table th {
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+        
+        .leaderboard-table tbody tr {
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        
+        .leaderboard-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .leaderboard-table tbody tr.current-user {
+            background: linear-gradient(135deg, #e8f4f8 0%, #f0e8f8 100%);
+            font-weight: 600;
+        }
+        
+        .leaderboard-table td {
+            padding: 18px 20px;
+        }
+        
+        .rank-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 30px;
+        }
+        
+        .rank-number.top-3 {
+            color: #ffc107;
+            font-size: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .user-level {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .score {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 18px;
+        }
+        
+        .stats-badges {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 10px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .badge.game {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .badge.video {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .medal {
+            font-size: 24px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .empty-state h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="goToDashboard()">← Back to Dashboard</button>
+        
+        <div class="header">
+            <h1>🏆 Leaderboard</h1>
+            <p>Compete with other learners and track your progress</p>
+            
+            <div class="your-rank" id="yourRank">
+                <div class="rank-stat">
+                    <div class="rank-stat-value" id="yourPosition">#0</div>
+                    <div class="rank-stat-label">Your Rank</div>
+                </div>
+                <div class="rank-stat">
+                    <div class="rank-stat-value" id="yourScore">0</div>
+                    <div class="rank-stat-label">Total Score</div>
+                </div>
+                <div class="rank-stat">
+                    <div class="rank-stat-value" id="yourGames">0</div>
+                    <div class="rank-stat-label">Games Played</div>
+                </div>
+                <div class="rank-stat">
+                    <div class="rank-stat-value" id="yourVideos">0</div>
+                    <div class="rank-stat-label">Videos Watched</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterLeaderboard('all')">🏅 All Users</button>
+            <button class="filter-btn" onclick="filterLeaderboard('games')">🎮 By Games</button>
+            <button class="filter-btn" onclick="filterLeaderboard('videos')">📺 By Learning</button>
+        </div>
+        
+        <div class="leaderboard">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">Rank</th>
+                        <th>User</th>
+                        <th style="text-align: right;">Score</th>
+                        <th style="text-align: center;">Games</th>
+                        <th style="text-align: center;">Videos</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px;">
+                            <div class="empty-state">
+                                <h3>Loading leaderboard...</h3>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        // Mock data - in production, this would come from the backend
+        const mockUsers = [
+            { username: 'Alex Chen', score: 4850, games: 24, videos: 12, userId: 1 },
+            { username: 'Priya Sharma', score: 4620, games: 20, videos: 15, userId: 2 },
+            { username: 'John Developer', score: 4390, games: 18, videos: 10, userId: 3 },
+            { username: 'Maria Garcia', score: 4120, games: 19, videos: 14, userId: 4 },
+            { username: 'Current User', score: 2850, games: 12, videos: 8, userId: 999, isCurrentUser: true },
+            { username: 'Samrat Singh', score: 3950, games: 17, videos: 9, userId: 5 },
+            { username: 'Lisa Wong', score: 3720, games: 15, videos: 11, userId: 6 },
+            { username: 'Ahmed Hassan', score: 3560, games: 14, videos: 7, userId: 7 },
+            { username: 'Emma Johnson', score: 3420, games: 13, videos: 9, userId: 8 },
+            { username: 'Carlos Rodriguez', score: 3250, games: 12, videos: 6, userId: 9 }
+        ];
+        
+        let currentFilter = 'all';
+        let currentUserId = 999;
+        
+        function sortLeaderboard(data, filter) {
+            const sorted = [...data];
+            
+            if (filter === 'games') {
+                sorted.sort((a, b) => b.games - a.games);
+            } else if (filter === 'videos') {
+                sorted.sort((a, b) => b.videos - a.videos);
+            } else {
+                sorted.sort((a, b) => b.score - a.score);
+            }
+            
+            return sorted;
+        }
+        
+        function renderLeaderboard() {
+            const tbody = document.getElementById('leaderboardBody');
+            const sorted = sortLeaderboard(mockUsers, currentFilter);
+            
+            // Update current user info
+            const currentUser = sorted.find(u => u.isCurrentUser);
+            if (currentUser) {
+                const rank = sorted.indexOf(currentUser) + 1;
+                document.getElementById('yourPosition').textContent = '#' + rank;
+                document.getElementById('yourScore').textContent = currentUser.score;
+                document.getElementById('yourGames').textContent = currentUser.games;
+                document.getElementById('yourVideos').textContent = currentUser.videos;
+            }
+            
+            tbody.innerHTML = '';
+            
+            sorted.forEach((user, index) => {
+                const row = document.createElement('tr');
+                if (user.isCurrentUser) {
+                    row.className = 'current-user';
+                }
+                
+                let rankMedal = '';
+                if (index === 0) rankMedal = '🥇';
+                else if (index === 1) rankMedal = '🥈';
+                else if (index === 2) rankMedal = '🥉';
+                
+                const rankHTML = `<div class="rank-number ${index < 3 ? 'top-3' : ''}">${rankMedal || index + 1}</div>`;
+                
+                row.innerHTML = `
+                    <td>${rankHTML}</td>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">${user.username.charAt(0)}</div>
+                            <div class="user-details">
+                                <div class="user-name">${user.username}</div>
+                                <div class="user-level">Level ${Math.floor(user.score / 1000) + 1}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align: right;"><div class="score">${user.score}</div></td>
+                    <td style="text-align: center;">
+                        <span class="badge game">🎮 ${user.games}</span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="badge video">📺 ${user.videos}</span>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        function filterLeaderboard(filter) {
+            currentFilter = filter;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderLeaderboard();
+        }
+        
+        function goToDashboard() {
+            window.location.href = '/dashboard';
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            renderLeaderboard();
+        });
+    </script>
+</body>
+</html>

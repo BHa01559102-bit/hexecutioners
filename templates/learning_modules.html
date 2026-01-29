@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Modules - Hexecutioners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .header-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .progress-stats {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            color: #667eea;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            background: #f0f0f0;
+            color: #333;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .video-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-thumbnail {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+            color: white;
+        }
+        
+        .play-button {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: transform 0.2s;
+        }
+        
+        .video-card:hover .play-button {
+            transform: scale(1.1);
+        }
+        
+        .video-info {
+            padding: 20px;
+        }
+        
+        .video-duration {
+            display: inline-block;
+            background: #f0f0f0;
+            color: #667eea;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .video-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .video-description {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .video-category {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .watch-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 12px;
+            transition: transform 0.2s;
+        }
+        
+        .watch-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .completion-badge {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .empty-state h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #666;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 20px;
+        }
+        
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-player {
+            flex: 1;
+            background: black;
+        }
+        
+        .video-player iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="goToDashboard()">← Back to Dashboard</button>
+        
+        <div class="header">
+            <div>
+                <h1>📚 Learning Modules</h1>
+                <p class="header-subtitle">Enhance your skills with curated videos on life and technical skills</p>
+            </div>
+            <div class="progress-stats">
+                <div class="stat">
+                    <div class="stat-label">Videos Watched</div>
+                    <div class="stat-value" id="watchedCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Hours Learned</div>
+                    <div class="stat-value" id="hoursCount">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('life-skills')">💡 Life Skills</button>
+            <button class="tab-btn" onclick="switchTab('technical-skills')">💻 Technical Skills</button>
+            <button class="tab-btn" onclick="switchTab('all')">🎯 All Videos</button>
+        </div>
+        
+        <div class="content-grid" id="videoGrid">
+            <!-- Videos will load here -->
+        </div>
+    </div>
+    
+    <div class="modal" id="videoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="videoTitle"></h2>
+                <button class="close-btn" onclick="closeVideo()">&times;</button>
+            </div>
+            <div class="video-player">
+                <iframe id="videoPlayer" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const videos = {
+            'life-skills': [
+                {
+                    id: 'leadership',
+                    title: 'Leadership Fundamentals',
+                    description: 'Learn the core principles of effective leadership and team management.',
+                    duration: '12:45',
+                    thumbnail: '👨‍💼',
+                    videoUrl: 'https://www.youtube.com/embed/FJhssMAUQVk'
+                },
+                {
+                    id: 'communication',
+                    title: 'Effective Communication Skills',
+                    description: 'Master the art of clear and persuasive communication in any setting.',
+                    duration: '15:30',
+                    thumbnail: '🗣️',
+                    videoUrl: 'https://www.youtube.com/embed/aJB-0uoWRAI'
+                },
+                {
+                    id: 'time-management',
+                    title: 'Time Management 101',
+                    description: 'Organize your day and maximize productivity with proven techniques.',
+                    duration: '18:20',
+                    thumbnail: '⏰',
+                    videoUrl: 'https://www.youtube.com/embed/HZnZMjx8VYo'
+                },
+                {
+                    id: 'emotional-intelligence',
+                    title: 'Emotional Intelligence at Work',
+                    description: 'Develop emotional awareness for better relationships and decision-making.',
+                    duration: '14:15',
+                    thumbnail: '❤️',
+                    videoUrl: 'https://www.youtube.com/embed/3AQe-OWfZ5I'
+                },
+                {
+                    id: 'conflict-resolution',
+                    title: 'Conflict Resolution Strategies',
+                    description: 'Navigate disagreements and find win-win solutions professionally.',
+                    duration: '16:40',
+                    thumbnail: '⚖️',
+                    videoUrl: 'https://www.youtube.com/embed/mPrECWo4r8w'
+                },
+                {
+                    id: 'problem-solving',
+                    title: 'Creative Problem-Solving',
+                    description: 'Develop innovative approaches to tackle complex challenges.',
+                    duration: '19:50',
+                    thumbnail: '🧩',
+                    videoUrl: 'https://www.youtube.com/embed/dRBnJOGE8pE'
+                }
+            ],
+            'technical-skills': [
+                {
+                    id: 'html-css',
+                    title: 'HTML & CSS Basics',
+                    description: 'Start your web development journey with HTML and CSS fundamentals.',
+                    duration: '22:15',
+                    thumbnail: '🌐',
+                    videoUrl: 'https://www.youtube.com/embed/qz0aGYrrlhU'
+                },
+                {
+                    id: 'javascript',
+                    title: 'JavaScript Fundamentals',
+                    description: 'Learn JavaScript from scratch - variables, functions, and DOM manipulation.',
+                    duration: '45:30',
+                    thumbnail: '⚙️',
+                    videoUrl: 'https://www.youtube.com/embed/W6NZfCO5tTE'
+                },
+                {
+                    id: 'python-intro',
+                    title: 'Python Programming Basics',
+                    description: 'Get started with Python - syntax, data types, and control flow.',
+                    duration: '38:20',
+                    thumbnail: '🐍',
+                    videoUrl: 'https://www.youtube.com/embed/kqtZkhylP-k'
+                },
+                {
+                    id: 'git-github',
+                    title: 'Git and GitHub Essentials',
+                    description: 'Master version control with Git and collaborate on GitHub.',
+                    duration: '28:45',
+                    thumbnail: '🔀',
+                    videoUrl: 'https://www.youtube.com/embed/RGOj5yH7evk'
+                },
+                {
+                    id: 'web-design',
+                    title: 'Responsive Web Design',
+                    description: 'Create beautiful websites that work on all devices using flexbox and grid.',
+                    duration: '32:10',
+                    thumbnail: '📱',
+                    videoUrl: 'https://www.youtube.com/embed/srvUrASNj0s'
+                },
+                {
+                    id: 'database',
+                    title: 'SQL & Database Design',
+                    description: 'Learn SQL queries and database design principles for data management.',
+                    duration: '41:25',
+                    thumbnail: '🗄️',
+                    videoUrl: 'https://www.youtube.com/embed/zbMHLJ0dY4w'
+                }
+            ]
+        };
+        
+        let currentTab = 'life-skills';
+        let watchedVideos = new Set();
+        
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderVideos();
+        }
+        
+        function renderVideos() {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = '';
+            
+            let videosToShow = [];
+            if (currentTab === 'all') {
+                videosToShow = [...videos['life-skills'], ...videos['technical-skills']];
+            } else {
+                videosToShow = videos[currentTab] || [];
+            }
+            
+            if (videosToShow.length === 0) {
+                grid.parentElement.appendChild(document.createElement('div')).className = 'empty-state';
+                grid.innerHTML = '<div class="empty-state"><h3>No videos available</h3></div>';
+                return;
+            }
+            
+            videosToShow.forEach(video => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                
+                const isWatched = watchedVideos.has(video.id);
+                
+                card.innerHTML = `
+                    <div class="video-thumbnail" onclick="playVideo('${video.id}')">
+                        <span style="font-size: 64px;">${video.thumbnail}</span>
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-duration">${video.duration}</div>
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-description">${video.description}</div>
+                        <div class="video-category">
+                            ${currentTab === 'technical-skills' || ['html-css', 'javascript', 'python-intro', 'git-github', 'web-design', 'database'].includes(video.id) 
+                                ? '💻 Technical' 
+                                : '💡 Life Skill'}
+                        </div>
+                        ${isWatched ? '<div class="completion-badge">✓ Watched</div>' : ''}
+                        <button class="watch-btn" onclick="playVideo('${video.id}')">${isWatched ? '▶ Watch Again' : '▶ Watch Now'}</button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        function playVideo(videoId) {
+            let videoUrl = '';
+            let videoTitle = '';
+            
+            // Search in both categories
+            for (const category in videos) {
+                const video = videos[category].find(v => v.id === videoId);
+                if (video) {
+                    videoUrl = video.videoUrl;
+                    videoTitle = video.title;
+                    break;
+                }
+            }
+            
+            document.getElementById('videoPlayer').src = videoUrl;
+            document.getElementById('videoTitle').textContent = videoTitle;
+            document.getElementById('videoModal').classList.add('show');
+            
+            // Mark as watched
+            watchedVideos.add(videoId);
+            updateStats();
+            
+            // Re-render to show watched badge
+            setTimeout(renderVideos, 500);
+        }
+        
+        function closeVideo() {
+            document.getElementById('videoModal').classList.remove('show');
+            document.getElementById('videoPlayer').src = '';
+        }
+        
+        function updateStats() {
+            document.getElementById('watchedCount').textContent = watchedVideos.size;
+            // Rough calculation: assume average 20 minutes per video
+            const hours = Math.round((watchedVideos.size * 20) / 60 * 10) / 10;
+            document.getElementById('hoursCount').textContent = hours;
+        }
+        
+        function goToDashboard() {
+            window.location.href = '/dashboard';
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            renderVideos();
+        });
+    </script>
+</body>
+</html>

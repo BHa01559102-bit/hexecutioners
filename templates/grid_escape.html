@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Escape+ - Hexecutioners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .game-header {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .game-title h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .game-title p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .game-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            min-width: 100px;
+        }
+        
+        .stat-box h3 {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .stat-box .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+        
+        .grid-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .grid.size-6 {
+            grid-template-columns: repeat(6, 1fr);
+        }
+        
+        .grid.size-7 {
+            grid-template-columns: repeat(7, 1fr);
+        }
+        
+        .tile {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            position: relative;
+            background: #f0f0f0;
+        }
+        
+        .tile:hover:not(.locked):not(.blocked) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tile.walkable {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tile.path {
+            background: #ffd700;
+            color: #333;
+            border-color: #ffb700;
+        }
+        
+        .tile.locked {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .tile.chart-tile {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            font-size: 14px;
+        }
+        
+        .tile.start {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: 3px solid #00f2fe;
+        }
+        
+        .tile.exit {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: 3px solid #38f9d7;
+            font-size: 24px;
+        }
+        
+        .tile.current {
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+        }
+        
+        .controls-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .control-section {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+        
+        .control-section:last-child {
+            border-bottom: none;
+        }
+        
+        .control-section h3 {
+            font-size: 14px;
+            color: #667eea;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .clue {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .pattern-lock {
+            background: #f9f9f9;
+            border: 2px dashed #667eea;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+        }
+        
+        .pattern-lock.active {
+            background: #e8f4f8;
+            border-color: #43e97b;
+            color: #155724;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-content h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        
+        .modal-content p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .score-display {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .button-group-modal {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .difficulty-btn {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #ddd;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .difficulty-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <div class="game-title">
+                <h1>🏃 Grid Escape+</h1>
+                <p>Navigate through logic puzzles and pattern constraints</p>
+            </div>
+            <div class="game-stats">
+                <div class="stat-box">
+                    <h3>Level</h3>
+                    <div class="value" id="levelDisplay">1</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Moves</h3>
+                    <div class="value" id="movesDisplay">0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Score</h3>
+                    <div class="value" id="scoreDisplay">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="grid-container">
+                <div>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn active" onclick="setDifficulty(1)">Easy (5x5)</button>
+                        <button class="difficulty-btn" onclick="setDifficulty(2)">Medium (6x6)</button>
+                        <button class="difficulty-btn" onclick="setDifficulty(3)">Hard (7x7)</button>
+                    </div>
+                </div>
+                <div class="grid" id="gameGrid"></div>
+            </div>
+            
+            <div class="controls-panel">
+                <div class="control-section">
+                    <h3>📋 Logic Clues</h3>
+                    <div id="cluesContainer"></div>
+                </div>
+                
+                <div class="control-section">
+                    <h3>🔐 Pattern Lock</h3>
+                    <div id="patternLockContainer" class="pattern-lock">
+                        Unlock by solving patterns
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button onclick="resetGame()">🔄 Reset</button>
+                    <button onclick="showHint()">💡 Hint</button>
+                </div>
+                
+                <button onclick="goToGames()" style="width: 100%;">← Back to Games</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="endModal">
+        <div class="modal-content">
+            <h2 id="endTitle">Level Complete!</h2>
+            <p id="endMessage"></p>
+            <div class="score-display" id="scoreDisplay2">0</div>
+            <div class="button-group-modal">
+                <button class="btn-secondary" onclick="goToGames()">Back to Games</button>
+                <button class="btn-success" onclick="nextLevel()">Next Level →</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const GRID_SIZES = { 1: 5, 2: 6, 3: 7 };
+        const SKILL_AREAS = ['Problem-Solving', 'Analytical Reasoning', 'Abstract Thinking', 'Data Interpretation'];
+        
+        let gameState = {
+            difficulty: 1,
+            level: 1,
+            gridSize: 5,
+            moves: 0,
+            score: 0,
+            currentPos: { x: 0, y: 0 },
+            visited: new Set(['0,0']),
+            grid: [],
+            gameOver: false,
+            startPos: { x: 0, y: 0 },
+            exitPos: null
+        };
+        
+        let gameLogic = {
+            redTileRule: "Red tiles and their neighbors cannot be consecutive moves",
+            chartTileRule: "Chart tiles only open if value meets condition",
+            transformRule: "Transform tiles change board orientation"
+        };
+        
+        function initGame() {
+            generateGrid();
+            renderGrid();
+            updateUI();
+            loadClues();
+        }
+        
+        function setDifficulty(level) {
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            gameState.difficulty = level;
+            gameState.gridSize = GRID_SIZES[level];
+            resetGame();
+        }
+        
+        function generateGrid() {
+            const size = gameState.gridSize;
+            gameState.grid = [];
+            
+            // Initialize grid
+            for (let y = 0; y < size; y++) {
+                gameState.grid[y] = [];
+                for (let x = 0; x < size; x++) {
+                    gameState.grid[y][x] = {
+                        type: 'walkable',
+                        locked: false,
+                        visited: false
+                    };
+                }
+            }
+            
+            // Set start and exit
+            gameState.startPos = { x: 0, y: 0 };
+            gameState.exitPos = { x: size - 1, y: size - 1 };
+            gameState.grid[0][0].type = 'start';
+            gameState.grid[size - 1][size - 1].type = 'exit';
+            
+            // Add logic constraints randomly
+            for (let i = 0; i < Math.floor(size / 2); i++) {
+                let x = Math.floor(Math.random() * size);
+                let y = Math.floor(Math.random() * size);
+                if (!(x === 0 && y === 0) && !(x === size - 1 && y === size - 1)) {
+                    gameState.grid[y][x].type = 'locked';
+                }
+            }
+            
+            // Add chart tiles
+            for (let i = 0; i < Math.floor(size / 3); i++) {
+                let x = Math.floor(Math.random() * size);
+                let y = Math.floor(Math.random() * size);
+                if (gameState.grid[y][x].type === 'walkable') {
+                    gameState.grid[y][x] = {
+                        type: 'chart-tile',
+                        condition: Math.floor(Math.random() * 100),
+                        locked: false
+                    };
+                }
+            }
+        }
+        
+        function renderGrid() {
+            const gridEl = document.getElementById('gameGrid');
+            gridEl.className = `grid size-${gameState.gridSize}`;
+            gridEl.innerHTML = '';
+            
+            for (let y = 0; y < gameState.gridSize; y++) {
+                for (let x = 0; x < gameState.gridSize; x++) {
+                    const tile = gameState.grid[y][x];
+                    const tileEl = document.createElement('div');
+                    tileEl.className = `tile ${tile.type}`;
+                    
+                    if (x === gameState.currentPos.x && y === gameState.currentPos.y) {
+                        tileEl.classList.add('current');
+                    }
+                    if (tile.type === 'chart-tile') {
+                        tileEl.textContent = tile.condition;
+                    }
+                    if (tile.type === 'exit') {
+                        tileEl.textContent = '🚪';
+                    }
+                    if (tile.type === 'start') {
+                        tileEl.textContent = '▶';
+                    }
+                    
+                    if (!tile.locked && tile.type !== 'exit') {
+                        tileEl.onclick = () => moveTo(x, y);
+                    }
+                    
+                    gridEl.appendChild(tileEl);
+                }
+            }
+        }
+        
+        function moveTo(x, y) {
+            const tile = gameState.grid[y][x];
+            
+            if (tile.locked) return;
+            
+            // Check if adjacent to current position
+            const dist = Math.abs(x - gameState.currentPos.x) + Math.abs(y - gameState.currentPos.y);
+            if (dist !== 1) {
+                alert('Can only move to adjacent tiles!');
+                return;
+            }
+            
+            gameState.currentPos = { x, y };
+            gameState.moves++;
+            gameState.visited.add(`${x},${y}`);
+            
+            // Check if reached exit
+            if (x === gameState.exitPos.x && y === gameState.exitPos.y) {
+                endLevel();
+                return;
+            }
+            
+            renderGrid();
+            updateUI();
+        }
+        
+        function loadClues() {
+            const cluesContainer = document.getElementById('cluesContainer');
+            cluesContainer.innerHTML = '';
+            
+            const clues = [
+                'Locked tiles cannot be crossed',
+                'Chart tiles reveal their value when stepped on',
+                'Find the shortest path to the exit'
+            ];
+            
+            clues.forEach(clue => {
+                const clueEl = document.createElement('div');
+                clueEl.className = 'clue';
+                clueEl.textContent = clue;
+                cluesContainer.appendChild(clueEl);
+            });
+        }
+        
+        function updateUI() {
+            document.getElementById('levelDisplay').textContent = gameState.level;
+            document.getElementById('movesDisplay').textContent = gameState.moves;
+            document.getElementById('scoreDisplay').textContent = gameState.score;
+        }
+        
+        function endLevel() {
+            gameState.gameOver = true;
+            
+            // Calculate score based on moves and difficulty
+            const baseScore = 1000;
+            const movesPenalty = gameState.moves * 10;
+            const difficultyBonus = gameState.difficulty * 100;
+            gameState.score = Math.max(100, baseScore - movesPenalty + difficultyBonus);
+            
+            // Show modal
+            const modal = document.getElementById('endModal');
+            document.getElementById('endTitle').textContent = `Level ${gameState.level} Complete!`;
+            document.getElementById('endMessage').textContent = `You completed the level in ${gameState.moves} moves!`;
+            document.getElementById('scoreDisplay2').textContent = gameState.score;
+            modal.classList.add('show');
+            
+            // Save score
+            saveScore(gameState.score);
+        }
+        
+        function nextLevel() {
+            gameState.level++;
+            gameState.moves = 0;
+            gameState.visited.clear();
+            gameState.gameOver = false;
+            gameState.currentPos = { x: 0, y: 0 };
+            document.getElementById('endModal').classList.remove('show');
+            generateGrid();
+            renderGrid();
+            updateUI();
+        }
+        
+        function resetGame() {
+            gameState.moves = 0;
+            gameState.visited.clear();
+            gameState.gameOver = false;
+            gameState.currentPos = { x: 0, y: 0 };
+            gameState.score = 0;
+            document.getElementById('endModal').classList.remove('show');
+            generateGrid();
+            renderGrid();
+            updateUI();
+        }
+        
+        function showHint() {
+            alert('Try to find a path from top-left to bottom-right, avoiding locked tiles!');
+        }
+        
+        function goToGames() {
+            window.location.href = '/games';
+        }
+        
+        async function saveScore(score) {
+            try {
+                const response = await fetch('/api/save-score', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        game_name: 'Grid Escape+',
+                        score: score,
+                        skills: SKILL_AREAS.slice(0, 3)
+                    })
+                });
+                const data = await response.json();
+                console.log('Score saved:', data);
+            } catch (error) {
+                console.error('Error saving score:', error);
+            }
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
